@@ -183,9 +183,167 @@
             <p><i class="fa fa-clock-o"></i> Posted on January 15, 2017</p>
             <hr>
             <p class="lead">There's a dragon afoot, we need a hero.</p>
+            <p>This challenge involves finding the key hidden inside an executable <i>dragons</i>, we are given a resources page which links to a list of x86 disassemblers to work with.</p>
 
+            <p>Since I'm on mac I decided to work with the nice GUI disassembler called <a href="https://www.hopperapp.com/">Hopper Disassembler v3</a> for the length of this solution.</p>
 
-            <h3><b>Flag:</b> CHC{}</h3>
+            <p>First I try running the executable in terminal to get familiar with the output. I'm greeted with:</p>
+
+<pre class="prettyprint">
+~~~[* Here be dragons, you've been warned! *]~~~
+Welcome to the text adventure dragon minigame!
+You are an adventurer seeking fortune and honor by defeating the dragon plaguing the countryside
+You have also been cursed by an evil wizard seeking to he himself control the dragon! You must complete your adventure before the curse consumes you!
+Health: 100
+So, where do you start your adventure?
+1) The great caves of N'gorth
+2) The city center
+3) The old groves
+</pre>
+
+            <p>Opening up the executable reveals a <i>TEXT</i> section and a series of functions, as usual. A brief scan through the text section reveals nothing that looks like a key, so we should check out the execution itself, it must somehow build a key.</p> 
+            <p>We can scroll down to <tt>_main</tt> to how execution starts:</p>
+
+<pre class="prettyprint">
+                         _main:
+0000000100001490         push       rbp
+0000000100001491         mov        rbp, rsp
+0000000100001494         sub        rsp, 0x40
+0000000100001498         lea        rax, qword [ds:0x100002d8e]                 ; "~~~[* Here be dragons, you've been warned! *]~~~\\n"
+000000010000149f         lea        rcx, qword [ds:_DRAGON_INJURED]
+00000001000014a6         lea        rdx, qword [ds:_REINFORCEMENTS]
+00000001000014ad         lea        r8, qword [ds:_AVOID_CAVE_TRAPS]
+...
+</pre>
+
+            <p>We can recognize some familiar text thanks to the inplace strings on the right-hand-side.
+Looking around we can also spot a call to a function called <tt>_startGame</tt>, in which we find calls to <tt>_dead</tt>, <tt>_playerChoice</tt>, <tt>_greatCaves</tt>, <tt>_cityCenter</tt>, and <tt>_oldGroves</tt>. All the functions take the argument <tt>[ss:rbp+var_8]</tt>, <tt>_playerChoice</tt> takes the additional arguments <tt>"gae"</tt> and <tt>3</tt>. Here we can refer back to the execution: We were presented with three possible paths, the great caves, the city center, and the old groves. It's likely not a coincidence that <tt>_playerChoice</tt> takes the argument <tt>3</tt> and then the other functions called are named in the likeness of the options given (therefore <tt>[ss:rbp+var_8]</tt> likely has something to do with the player). That leaves the argument <tt>"gae"</tt>. Let's look at one more example to see what this argument could be: let's jump to <tt>_cityCenter</tt></p>
+
+            <p>In execution typing <tt>2</tt> brings us to the city center with the following prompt:</p>
+<pre class="prettyprint">
+Health: 100
+The city center is full of activity! There's so much to do!
+1) Talk to the madman
+2) Visit the healer
+3) Leave the city for the old grove
+4) Go to the tavern
+5) Go to the caves
+</pre>
+
+            <p>In the disassembler we see that <tt>_playerChoice</tt> is now presented with the arguments <tt>[ss:rbp+var_8]</tt>, <tt>"f.j_r"</tt>, and <tt>5`. So we again have 5 options and the parameter 5 being passed. Also we have a string of length 5 being passed. If the executable is building the key this is likely how it's being done. Let's assume that the key is built using the characters at the same index as the path taken, i.e. in the string "gae", should you choose the first path then the key with gain the letter "g" etc...</p>
+
+            <p>Going through the executable we can make a map of paths between function calls and their associated key strings:</p>
+<pre class="prettyprint">
+<code class="language-python">
+paths = {
+    '_start' : ('gae',['_greatCaves','_cityCenter','_oldGroves']),
+    '_dead' : ('',[]),
+    '_greatCaves' : ('au',['_enterDepths','_climbTop']),
+                              #_talkMadman
+    '_cityCenter' : ('f.j_r',['_cityCenter','_healer','_oldGroves','_tavern','_greatCaves']),
+    '_oldGroves' : ('',[]),
+    #'_talkMadman' : '_cityCenter',
+    '_healer' : ('jk',['_cityCenter','_dead']),
+    '_tavern' : ('tx',['_cityCenter','_cityCenter']),
+    '_climbTop' : ('me',['_fields','_reinforcements']),
+    '_enterDepths' : ('c',['_sewers']),
+    '_sewers' : ('b',['_cityCenter']),
+    '_reinforcements' : ('_',['_fields']),
+    '_fields' : ('ehl',['_rupturedSpire','_barracks','_forcedMarch']),
+    '_barracks' : ('e',['_rupturedSpire']),
+    '_forcedMarch' : ('',[]),
+    '_rupturedSpire' : ('rxa',['_arrowAttack','_failedAttack','_failedAttack']),
+    '_failedAttack' : ('',[]),
+    '_arrowAttack' : ('ooox',['_end','_end','_end','_dead']), # Didn't call anything, made a new _end category
+    '_end' : ('',[])
+}
+</code>
+</pre>
+            <p><tt>_talkMadman</tt> seems to be special because no choice is made, so we just pretend <tt>_cityCenter</tt> links back to itself in that case. To deal with some of the ambiguous options we added a <tt>_dead</tt> path which we populate manually based on flavor text (i.e. <i>"The dragon seizes the oppurtunity of your mercy to lunge forward and snap you in two with its mighty jaws"</i> in <tt>_arrowAttack</tt>). We also add <tt>_end</tt> where things end but the flavortext doesn't seem to suggest death.</p>
+
+            <p>Now let's find every path from <tt>_start</tt> to <tt>_end</tt> of length up to 16 (we can increase this if needed later): We will consider the paths above to be a graph and use a basic pathfinding algorithm. To output shorter paths first we will have the priority only based on number of loops:</p>
+
+<pre class="prettyprint">
+<code class="language-python">
+def keygen(maxkeylen = 16):
+    # visits[nodename] = (number of times visited node)
+    visits = {}
+    current_top = 0
+    paths_heap = []
+    for loc in paths.keys():
+        visits[loc] = 0
+
+    paths_heap.append([('_start',[],'')])
+
+    while len(paths_heap) > 0:
+        curr_loc, path_so_far, key_so_far = paths_heap[0].pop()
+        visits[curr_loc] = current_top+1
+        next_letters, next_locs = paths[curr_loc]
+        if len(next_locs) == 0 and curr_loc == '_end':
+            yield key_so_far, ",".join(str(i) for i in path_so_far)
+        elif len(path_so_far) < maxkeylen:
+            for i in range(len(next_letters)):
+                next_letter, next_loc = next_letters[i], next_locs[i]
+                times_seen = visits[next_loc]
+
+                heap_index = times_seen - current_top
+                while len(paths_heap) <= heap_index:
+                    paths_heap.append([])
+                paths_heap[heap_index].append((next_loc, path_so_far + [i+1], key_so_far + next_letter))
+        # Nothing left that we've visited only <current_top> times
+        while len(paths_heap)>0 and len(paths_heap[0]) == 0:
+            current_top += 1
+            paths_heap.pop(0)
+
+for key,path in keygen():
+    print(key + "\t" + path)
+</code>
+</pre>
+            <p>Running this outputs 15345 lines of possible key/path combinations:</p>
+
+<pre class="prettyprint">
+arue_hero   2,5,2,2,1,2,1,1,3
+arue_hero   2,5,2,2,1,2,1,1,2
+arue_hero   2,5,2,2,1,2,1,1,1
+gue_hero    1,2,2,1,2,1,1,3
+...
+</pre>
+            <p>None of these first few allow us to <i>kill the dragon</i>, but it looks like the all end in <tt>hero</tt>, and possibly <tt>_</tt> demarks spaces, let's try considering only keys which are made of english words separated by underscores:</p>
+
+<pre class="prettyprint">
+<code class="language-python">
+import enchant
+d = enchant.Dict("en_US")
+
+...
+
+def check_all_words(words):
+    for word in words:
+        if not d.check(word):
+            return False
+    return True
+
+for key,path in keygen():
+    words = key.split('_')
+    if check_all_words(words):
+        print(key+"\t"+path)
+</code>
+</pre>
+            <p>This outputs:</p>
+<pre class="prettyprint">
+a_true_hero 2,4,1,5,2,2,1,2,1,1,3
+a_true_hero 2,4,1,5,2,2,1,2,1,1,2
+a_true_hero 2,4,1,5,2,2,1,2,1,1,1
+a_x_true_hero   2,4,2,4,1,5,2,2,1,2,1,1,3
+a_x_true_hero   2,4,2,4,1,5,2,2,1,2,1,1,2
+...
+</pre>
+            <p>It looks like this may be our key, chances are that the <tt>CHC{...}</tt> are added somewhere else in the executable, but by inputting the choices <tt>2,4,1,5,2,2,1,2,1,1,3</tt> we can verify that we have the correct combination to defeat the dragon. If we open up the executable now in a debugger and input the combination I'm sure we would find <tt>CHC{a_true_hero}</tt> somewhere, but we can also just try to input that into the CHC website (it works).</p>
+
+            <h3>Note:</h3>
+            <p>This challenge could also be solved by just playing with the combinations and checking the debugger every time, but that would take a while and it would be hard to tell if you were making progress. I like the above solution because it's easy to tell when progress is being made.</p>
+
+            <h3><b>Flag:</b> CHC{a_true_hero}</h3>
 
             <hr>
 
