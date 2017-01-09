@@ -290,7 +290,7 @@ def keygen(maxkeylen = 16):
                 while len(paths_heap) <= heap_index:
                     paths_heap.append([])
                 paths_heap[heap_index].append((next_loc, path_so_far + [i+1], key_so_far + next_letter))
-        # Nothing left that we've visited only <current_top> times
+        # Nothing left that we've visited only [current_top] times
         while len(paths_heap)>0 and len(paths_heap[0]) == 0:
             current_top += 1
             paths_heap.pop(0)
