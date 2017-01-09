@@ -230,7 +230,7 @@ The city center is full of activity! There's so much to do!
 5) Go to the caves
 </pre>
 
-            <p>In the disassembler we see that <tt>_playerChoice</tt> is now presented with the arguments <tt>[ss:rbp+var_8]</tt>, <tt>"f.j_r"</tt>, and <tt>5`. So we again have 5 options and the parameter 5 being passed. Also we have a string of length 5 being passed. If the executable is building the key this is likely how it's being done. Let's assume that the key is built using the characters at the same index as the path taken, i.e. in the string "gae", should you choose the first path then the key with gain the letter "g" etc...</p>
+            <p>In the disassembler we see that <tt>_playerChoice</tt> is now presented with the arguments <tt>[ss:rbp+var_8]</tt>, <tt>"f.j_r"</tt>, and <tt>5</tt>. So we again have 5 options and the parameter 5 being passed. Also we have a string of length 5 being passed. If the executable is building the key this is likely how it's being done. Let's assume that the key is built using the characters at the same index as the path taken, i.e. in the string "gae", should you choose the first path then the key with gain the letter "g" etc...</p>
 
             <p>Going through the executable we can make a map of paths between function calls and their associated key strings:</p>
 <pre class="prettyprint">
