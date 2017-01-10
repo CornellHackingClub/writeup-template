@@ -200,7 +200,7 @@ import (
     &quot;strings&quot;
 )
 
-func getTwoBlocks(input string) [48]byte {
+func getThreeBlocks(input string) [48]byte {
     conn, err := net.Dial(&quot;tcp&quot;, &quot;chc.cs.cornell.edu:1339&quot;)
     defer conn.Close()
     if err != nil {
@@ -227,10 +227,10 @@ outer:
         preambleLen := flagLen - known.Len() + 15
         preamble := strings.Repeat(&quot;A&quot;, preambleLen)
 
-        goal := getTwoBlocks(preamble)
+        goal := getThreeBlocks(preamble)
 
         for _, char := range printable {
-            try := getTwoBlocks(preamble + known.String() + string(char))
+            try := getThreeBlocks(preamble + known.String() + string(char))
             if try == goal {
                 known.WriteRune(char)
                 log.Println(known.String())
