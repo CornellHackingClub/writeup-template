@@ -142,11 +142,7 @@
             <!-- Date/Time -->
             <p><i class="fa fa-clock-o"></i> Posted on January 15, 2017</p>
 
-            <hr>
-
-            <p class="lead">echo "test" | nc chc.cs.cornell.edu 1339 | xxd
-            </p>
-            
+            <hr>            
             
             <p>Take <code>+</code> to also denote string concatenation in this write-up.</p>
             <h1 id="introduction">Introduction</h1>
@@ -168,17 +164,17 @@
             <li>Make a memorable ascii string of length <strong>block size</strong>, like &quot;AAAAAAAAAAAAAAAA&quot;</li>
             <li><p>Feed it to the net cat and see what it spits out.</p>
             <pre><code>&gt; echo &quot;AAAAAAAAAAAAAAAA&quot; | nc chc.cs.cornell.edu 1339 | xxd
-            00000000: a79e f6d9 9306 bfdb 796a caf9 c4a6 4823  ........yj....H#
-            00000010: c252 b375 f5e4 46f5 c64c bcaa ab3d 2899  .R.u..F..L...=(.
-            00000020: 0910 03b7 7cbc 9122 df0c 226c a6b3 d81b  ....|..&quot;..&quot;l....
-            00000030: d207 48cd e1ee a272 7399 f30c 0493 1fa7  ..H....rs.......</code></pre></li>
+00000000: a79e f6d9 9306 bfdb 796a caf9 c4a6 4823  ........yj....H#
+00000010: c252 b375 f5e4 46f5 c64c bcaa ab3d 2899  .R.u..F..L...=(.
+00000020: 0910 03b7 7cbc 9122 df0c 226c a6b3 d81b  ....|..&quot;..&quot;l....
+00000030: d207 48cd e1ee a272 7399 f30c 0493 1fa7  ..H....rs.......</code></pre></li>
             <li><p>Double the string (concatenate it with itself) and do it again.</p>
             <pre><code>&gt; echo &quot;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&quot; | nc chc.cs.cornell.edu 1339 | xxd
-            00000000: a79e f6d9 9306 bfdb 796a caf9 c4a6 4823  ........yj....H#
-            00000010: a79e f6d9 9306 bfdb 796a caf9 c4a6 4823  ........yj....H#
-            00000020: c252 b375 f5e4 46f5 c64c bcaa ab3d 2899  .R.u..F..L...=(.
-            00000030: 0910 03b7 7cbc 9122 df0c 226c a6b3 d81b  ....|..&quot;..&quot;l....
-            00000040: d207 48cd e1ee a272 7399 f30c 0493 1fa7  ..H....rs.......</code></pre></li>
+00000000: a79e f6d9 9306 bfdb 796a caf9 c4a6 4823  ........yj....H#
+00000010: a79e f6d9 9306 bfdb 796a caf9 c4a6 4823  ........yj....H#
+00000020: c252 b375 f5e4 46f5 c64c bcaa ab3d 2899  .R.u..F..L...=(.
+00000030: 0910 03b7 7cbc 9122 df0c 226c a6b3 d81b  ....|..&quot;..&quot;l....
+00000040: d207 48cd e1ee a272 7399 f30c 0493 1fa7  ..H....rs.......</code></pre></li>
             </ol>
             <p>Notice how the first and the second blocks are the same ciphertext, just as in the plaintext.</p>
             <p>The gaping flaw of the ECB way of doing things is, identical blocks of input produce identical ciphertext blocks. You can exploit this.</p>
