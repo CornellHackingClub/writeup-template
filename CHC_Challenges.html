@@ -146,6 +146,53 @@
 
             <p class="lead">echo "test" | nc chc.cs.cornell.edu 1339 | xxd
             </p>
+            
+            
+            <p>Take <code>+</code> to also denote string concatenation in this write-up.</p>
+            <h1 id="introduction">Introduction</h1>
+            <p>(Have netcat installed)</p>
+            <p>Run <code>echo &quot;test&quot; | nc chc.cs.cornell.edu 1339 | xxd</code> to get this output:</p>
+            <pre><code>00000000: 4438 29c5 6703 a773 d984 bc20 5ab6 a147  D8).g..s... Z..G
+            00000010: 120b 0b9a 49ff b1f7 fea7 16a3 e709 cf1c  ....I...........
+            00000020: 76fb 8334 72ab 3708 f661 916a bc20 6d20  v..4r.7..a.j. m</code></pre>
+            <p>Notice how each line is 16 bytes.</p>
+            <p>From the source code, the <code>&quot;test&quot; + flag + padding</code> was encrypted using AES in ECB mode to give that output.</p>
+            <p>The length of &quot;test&quot; is 4. From this line in the source code:</p>
+            <pre><code>padding[16 - ( strlen(input_string) % 16 )] = &#39;\0&#39;;</code></pre>
+            <p>it appears that the length of <code>padding</code> must be 12, which is 4 less than 16. So <code>padding</code> ensures that the length of <code>&quot;test&quot; + padding</code> is a multiple of 16.</p>
+            <p>The <strong>block size</strong> is likely to be 16 bytes, or 128 bits.</p>
+            <p>The output is a total of 48 bytes, and 16 of these were <code>&quot;test&quot; + padding</code> so the flag is <strong>32 bytes long</strong>.</p>
+            <h2 id="more-about-aes-in-ecb-mode">More about AES in ECB mode</h2>
+            <p>Try this:</p>
+            <ol style="list-style-type: decimal">
+            <li>Make a memorable ascii string of length <strong>block size</strong>, like &quot;AAAAAAAAAAAAAAAA&quot;</li>
+            <li><p>Feed it to the net cat and see what it spits out.</p>
+            <pre><code>&gt; echo &quot;AAAAAAAAAAAAAAAA&quot; | nc chc.cs.cornell.edu 1339 | xxd
+            00000000: a79e f6d9 9306 bfdb 796a caf9 c4a6 4823  ........yj....H#
+            00000010: c252 b375 f5e4 46f5 c64c bcaa ab3d 2899  .R.u..F..L...=(.
+            00000020: 0910 03b7 7cbc 9122 df0c 226c a6b3 d81b  ....|..&quot;..&quot;l....
+            00000030: d207 48cd e1ee a272 7399 f30c 0493 1fa7  ..H....rs.......</code></pre></li>
+            <li><p>Double the string (concatenate it with itself) and do it again.</p>
+            <pre><code>&gt; echo &quot;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&quot; | nc chc.cs.cornell.edu 1339 | xxd
+            00000000: a79e f6d9 9306 bfdb 796a caf9 c4a6 4823  ........yj....H#
+            00000010: a79e f6d9 9306 bfdb 796a caf9 c4a6 4823  ........yj....H#
+            00000020: c252 b375 f5e4 46f5 c64c bcaa ab3d 2899  .R.u..F..L...=(.
+            00000030: 0910 03b7 7cbc 9122 df0c 226c a6b3 d81b  ....|..&quot;..&quot;l....
+            00000040: d207 48cd e1ee a272 7399 f30c 0493 1fa7  ..H....rs.......</code></pre></li>
+            </ol>
+            <p>Notice how the first and the second blocks are the same ciphertext, just as in the plaintext.</p>
+            <p>The gaping flaw of the ECB way of doing things is, identical blocks of input produce identical ciphertext blocks. You can exploit this.</p>
+            <h1 id="decrypting-the-flag">Decrypting the flag</h1>
+            <ol style="list-style-type: decimal">
+            <li>Make an input of size 15 like &quot;AAAAAAAAAAAAAAA&quot;. This is one byte short of the block size.</li>
+            <li>If the input is size 15, and it gets concatenated with flag, then the 16th byte that gets encrypted must be the first byte of the flag.</li>
+            <li>Make a dictionary of the outputs of &quot;AAAAAAAAAAAAAAAa&quot;, &quot;AAAAAAAAAAAAAAAb&quot;, ... for <em>every</em> printable char. You want one of these chars to be the first byte of the flag.</li>
+            <li>One of the outputs will match the outputs from step 1. This is the first byte. (spoiler: The capital letter C is the first byte)</li>
+            <li>Then repeat step 1 with an input of size 14: &quot;AAAAAAAAAAAAAA&quot; (2 bytes short)</li>
+            <li>Make a dictionary for &quot;AAAAAAAAAAAAAACa&quot;, &quot;AAAAAAAAAAAAAACb&quot;, ...</li>
+            <li>Keep going until you have decrypted the whole flag. Automate it.</li>
+            </ol>
+
 
 
             <h3><b>Flag:</b> CHC{}</h3>
