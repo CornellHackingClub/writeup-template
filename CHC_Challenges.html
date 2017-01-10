@@ -189,9 +189,92 @@
             <li>Keep going until you have decrypted the whole flag. Automate it.</li>
             </ol>
 
+            <h1 id="automate">Automate!</h1>
+            <p>Quick and dirty Go program.</p>
+            <pre class="prettyprint"><code>package main
 
+import (
+    &quot;bytes&quot;
+    &quot;log&quot;
+    &quot;net&quot;
+    &quot;strings&quot;
+)
 
-            <h3><b>Flag:</b> CHC{}</h3>
+func getTwoBlocks(input string) [48]byte {
+    conn, err := net.Dial(&quot;tcp&quot;, &quot;chc.cs.cornell.edu:1339&quot;)
+    defer conn.Close()
+    if err != nil {
+        log.Fatal(err)
+    }
+    _, err = conn.Write([]byte(input))
+    if err != nil {
+        log.Fatal(err)
+    }
+    conn.(*net.TCPConn).CloseWrite()
+
+    var buf [48]byte
+    conn.Read(buf[:])
+    return buf
+}
+
+const printable string = &quot;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\&quot;#$%&amp;&#39;()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~&quot;
+const flagLen int = 32
+
+func main() {
+    known := bytes.NewBufferString(&quot;&quot;) // Technically you can write &quot;CHC{&quot; here
+outer:
+    for known.Len() != flagLen {
+        preambleLen := flagLen - known.Len() + 15
+        preamble := strings.Repeat(&quot;A&quot;, preambleLen)
+
+        goal := getTwoBlocks(preamble)
+
+        for _, char := range printable {
+            try := getTwoBlocks(preamble + known.String() + string(char))
+            if try == goal {
+                known.WriteRune(char)
+                log.Println(known.String())
+                continue outer
+            }
+        }
+        log.Fatalln(&quot;cannot continue&quot;)
+    }
+}</code></pre>
+<h2 id="output">Output</h2>
+<pre><code>2017/01/10 07:59:59 C
+2017/01/10 08:00:07 CH
+2017/01/10 08:00:13 CHC
+2017/01/10 08:00:28 CHC{
+2017/01/10 08:00:32 CHC{n
+2017/01/10 08:00:32 CHC{n0
+2017/01/10 08:00:38 CHC{n0w
+2017/01/10 08:00:52 CHC{n0w_
+2017/01/10 08:00:57 CHC{n0w_s
+2017/01/10 08:00:58 CHC{n0w_s3
+2017/01/10 08:00:58 CHC{n0w_s33
+2017/01/10 08:01:13 CHC{n0w_s33_
+2017/01/10 08:01:27 CHC{n0w_s33__
+2017/01/10 08:01:29 CHC{n0w_s33__7
+2017/01/10 08:01:32 CHC{n0w_s33__7h
+2017/01/10 08:01:33 CHC{n0w_s33__7h4
+2017/01/10 08:01:34 CHC{n0w_s33__7h47
+2017/01/10 08:01:35 CHC{n0w_s33__7h475
+2017/01/10 08:01:50 CHC{n0w_s33__7h475_
+2017/01/10 08:01:51 CHC{n0w_s33__7h475_4
+2017/01/10 08:02:06 CHC{n0w_s33__7h475_4_
+2017/01/10 08:02:13 CHC{n0w_s33__7h475_4_F
+2017/01/10 08:02:18 CHC{n0w_s33__7h475_4_Fu
+2017/01/10 08:02:18 CHC{n0w_s33__7h475_4_Fu1
+2017/01/10 08:02:22 CHC{n0w_s33__7h475_4_Fu1l
+2017/01/10 08:02:37 CHC{n0w_s33__7h475_4_Fu1l_
+2017/01/10 08:02:44 CHC{n0w_s33__7h475_4_Fu1l_H
+2017/01/10 08:02:44 CHC{n0w_s33__7h475_4_Fu1l_H0
+2017/01/10 08:02:49 CHC{n0w_s33__7h475_4_Fu1l_H0u
+2017/01/10 08:02:50 CHC{n0w_s33__7h475_4_Fu1l_H0u5
+2017/01/10 08:02:51 CHC{n0w_s33__7h475_4_Fu1l_H0u53
+2017/01/10 08:03:06 CHC{n0w_s33__7h475_4_Fu1l_H0u53}</code></pre>
+
+            <h3><b>Flag:</b> CHC{n0w_s33__7h475_4_Fu1l_H0u53}</h3>
 
             <hr>
 
