@@ -3,30 +3,54 @@
 
 <head>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
 
-    <title>Cornell Hacking Club</title>
+	<title>Cornell Hacking Club</title>
 
-    <!-- Bootstrap Core CSS -->
-    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap Core CSS -->
+	<link href="static/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom CSS -->
-    <link href="static/css/modern-business.css" rel="stylesheet">
-    <link href="static/css/general.css" rel="stylesheet">
+	<!-- Custom CSS -->
+	<link href="static/css/modern-business.css" rel="stylesheet">
+	<link href="static/css/general.css" rel="stylesheet">
 
-    <!-- Custom Fonts -->
-    <link href="static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	<!-- Custom Fonts -->
+	<link href="static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
+
+<!-- Go syntax highlighting -->
+
+	<style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { font-weight: bold; } /* Keyword */
+code > span.dt { text-decoration: underline; } /* DataType */
+code > span.co { font-style: italic; } /* Comment */
+code > span.al { font-weight: bold; } /* Alert */
+code > span.er { font-weight: bold; } /* Error */
+code > span.wa { font-style: italic; } /* Warning */
+code > span.cf { font-weight: bold; } /* ControlFlow */
+code > span.pp { font-weight: bold; } /* Preprocessor */
+code > span.do { font-style: italic; } /* Documentation */
+code > span.an { font-style: italic; } /* Annotation */
+code > span.cv { font-style: italic; } /* CommentVar */
+code > span.in { font-style: italic; } /* Information */
+  </style>
 
 </head>
 
@@ -144,7 +168,6 @@
 
             <hr>            
 
-
 <p>Take <code>+</code> to also denote string concatenation in this write-up.</p>
 <h2 id="introduction">Introduction</h2>
 <p>(Have netcat installed)</p>
@@ -179,7 +202,7 @@
 </ol>
 <p>Notice how the first and the second blocks are the same ciphertext, just as in the plaintext.</p>
 <p>The gaping flaw of ECB is, identical blocks of input produce identical ciphertext blocks. You can exploit this.</p>
-<h2 id="decrypting-the-flag">Decrypting the Flag (General Idea)</h2>
+<h2 id="decrypting-the-flag-general-idea">Decrypting the flag (General Idea)</h2>
 <ol style="list-style-type: decimal">
 <li>Make an input of size 15 like &quot;AAAAAAAAAAAAAAA&quot;. This is one byte short of the block size.</li>
 <li>If the input is size 15, and it gets concatenated with flag, then the 16th byte that gets encrypted must be the first byte of the flag.</li>
@@ -191,55 +214,56 @@
 </ol>
 <h2 id="automate">Automate!</h2>
 <p>Quick and dirty Go program.</p>
-<pre><code>package main
+<div class="sourceCode"><pre class="sourceCode go"><code class="sourceCode go"><span class="kw">package</span> main
 
-import (
-    &quot;bytes&quot;
-    &quot;log&quot;
-    &quot;net&quot;
-    &quot;strings&quot;
+<span class="kw">import</span> (
+    <span class="st">&quot;bytes&quot;</span>
+    <span class="st">&quot;log&quot;</span>
+    <span class="st">&quot;net&quot;</span>
+    <span class="st">&quot;strings&quot;</span>
 )
 
-func getThreeBlocks(input string) [48]byte {
-    conn, err := net.Dial(&quot;tcp&quot;, &quot;chc.cs.cornell.edu:1339&quot;)
-    defer conn.Close()
-    if err != nil {
+<span class="kw">func</span> getThreeBlocks(input <span class="dt">string</span>) [<span class="dv">48</span>]<span class="dt">byte</span> {
+    conn, err := net.Dial(<span class="st">&quot;tcp&quot;</span>, <span class="st">&quot;chc.cs.cornell.edu:1339&quot;</span>)
+    <span class="kw">defer</span> conn.Close()
+    <span class="kw">if</span> err != <span class="ot">nil</span> {
         log.Fatal(err)
     }
-    _, err = conn.Write([]byte(input))
-    if err != nil {
+    _, err = conn.Write([]<span class="dt">byte</span>(input))
+    <span class="kw">if</span> err != <span class="ot">nil</span> {
         log.Fatal(err)
     }
     conn.(*net.TCPConn).CloseWrite()
 
-    var buf [48]byte
+    <span class="kw">var</span> buf [<span class="dv">48</span>]<span class="dt">byte</span>
     conn.Read(buf[:])
-    return buf
+    <span class="kw">return</span> buf
 }
 
-const printable string = &quot;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\&quot;#$%&amp;&#39;()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~&quot;
-const flagLen int = 32
+<span class="kw">const</span> printable <span class="dt">string</span> = <span class="st">&quot;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!</span><span class="ch">\&quot;</span><span class="st">#$%&amp;&#39;()*+,-./:;&lt;=&gt;?@[</span><span class="ch">\\</span><span class="st">]^_`{|}~&quot;</span>
+<span class="kw">const</span> flagLen <span class="dt">int</span> = <span class="dv">32</span>
 
-func main() {
-    known := bytes.NewBufferString(&quot;&quot;) // Technically you can write &quot;CHC{&quot; here
+<span class="kw">func</span> main() {
+    known := bytes.NewBufferString(<span class="st">&quot;&quot;</span>) <span class="co">// Technically you can write &quot;CHC{&quot; here</span>
+
 outer:
-    for known.Len() != flagLen {
-        preambleLen := flagLen - known.Len() + 15
-        preamble := strings.Repeat(&quot;A&quot;, preambleLen)
+    <span class="kw">for</span> known.Len() != flagLen { <span class="co">// while known.Len() != flagLen:</span>
+        preambleLen := flagLen - known.Len() + <span class="dv">15</span>
+        preamble := strings.Repeat(<span class="st">&quot;A&quot;</span>, preambleLen)
 
         goal := getThreeBlocks(preamble)
 
-        for _, char := range printable {
-            try := getThreeBlocks(preamble + known.String() + string(char))
-            if try == goal {
+        <span class="kw">for</span> _, char := <span class="kw">range</span> printable { <span class="co">// for char in printable: </span>
+            try := getThreeBlocks(preamble + known.String() + <span class="dt">string</span>(char))
+            <span class="kw">if</span> try == goal {
                 known.WriteRune(char)
                 log.Println(known.String())
-                continue outer
+                <span class="kw">continue</span> outer
             }
         }
-        log.Fatalln(&quot;cannot continue&quot;)
+        log.Fatalln(<span class="st">&quot;cannot continue&quot;</span>)
     }
-}</code></pre>
+}</code></pre></div>
 <h3 id="output">Output</h3>
 <pre><code>2017/01/10 07:59:59 C
 2017/01/10 08:00:07 CH
