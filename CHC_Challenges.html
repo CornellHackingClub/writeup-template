@@ -178,8 +178,8 @@
 00000040: d207 48cd e1ee a272 7399 f30c 0493 1fa7  ..H....rs.......</code></pre></li>
 </ol>
 <p>Notice how the first and the second blocks are the same ciphertext, just as in the plaintext.</p>
-<p>The gaping flaw of the ECB way of doing things is, identical blocks of input produce identical ciphertext blocks. You can exploit this.</p>
-<h2 id="decrypting-the-flag">Decrypting the flag</h2>
+<p>The gaping flaw of ECB is, identical blocks of input produce identical ciphertext blocks. You can exploit this.</p>
+<h2 id="decrypting-the-flag">Decrypting the Flag (General Idea)</h2>
 <ol style="list-style-type: decimal">
 <li>Make an input of size 15 like &quot;AAAAAAAAAAAAAAA&quot;. This is one byte short of the block size.</li>
 <li>If the input is size 15, and it gets concatenated with flag, then the 16th byte that gets encrypted must be the first byte of the flag.</li>
