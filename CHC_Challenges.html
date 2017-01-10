@@ -3,75 +3,223 @@
 
 <head>
 
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="">
-	<meta name="author" content="">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-	<title>Cornell Hacking Club</title>
+    <title>Cornell Hacking Club</title>
 
-	<!-- Bootstrap Core CSS -->
-	<link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Core CSS -->
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
 
-	<!-- Custom CSS -->
-	<link href="static/css/modern-business.css" rel="stylesheet">
-	<link href="static/css/general.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="static/css/modern-business.css" rel="stylesheet">
+    <link href="static/css/general.css" rel="stylesheet">
 
-	<!-- Custom Fonts -->
-	<link href="static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <!-- Custom Fonts -->
+    <link href="static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
-	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-	<!--[if lt IE 9]>
-	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-	<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-	<![endif]-->
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 
-	<!-- Go syntax highlighting -->
-	<style type="text/css">
-	div.sourceCode { overflow-x: auto; }
-	table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-	  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-	table.sourceCode { width: 100%; line-height: 100%; }
-	td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-	td.sourceCode { padding-left: 5px; }
-	code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-	code > span.dt { color: #902000; } /* DataType */
-	code > span.dv { color: #40a070; } /* DecVal */
-	code > span.bn { color: #40a070; } /* BaseN */
-	code > span.fl { color: #40a070; } /* Float */
-	code > span.ch { color: #4070a0; } /* Char */
-	code > span.st { color: #4070a0; } /* String */
-	code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-	code > span.ot { color: #007020; } /* Other */
-	code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-	code > span.fu { color: #06287e; } /* Function */
-	code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-	code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-	code > span.cn { color: #880000; } /* Constant */
-	code > span.sc { color: #4070a0; } /* SpecialChar */
-	code > span.vs { color: #4070a0; } /* VerbatimString */
-	code > span.ss { color: #bb6688; } /* SpecialString */
-	code > span.im { } /* Import */
-	code > span.va { color: #19177c; } /* Variable */
-	code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-	code > span.op { color: #666666; } /* Operator */
-	code > span.bu { } /* BuiltIn */
-	code > span.ex { } /* Extension */
-	code > span.pp { color: #bc7a00; } /* Preprocessor */
-	code > span.at { color: #7d9029; } /* Attribute */
-	code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-	code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-	code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-	code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-	  </style>
+    <!-- Go syntax highlighting -->
+    <style type="text/css">
+        div.sourceCode {
+            overflow-x: auto;
+        }
+
+        table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+            margin: 0;
+            padding: 0;
+            vertical-align: baseline;
+            border: none;
+        }
+
+        table.sourceCode {
+            width: 100%;
+            line-height: 100%;
+        }
+
+        td.lineNumbers {
+            text-align: right;
+            padding-right: 4px;
+            padding-left: 4px;
+            color: #aaaaaa;
+            border-right: 1px solid #aaaaaa;
+        }
+
+        td.sourceCode {
+            padding-left: 5px;
+        }
+
+        code > span.kw {
+            color: #007020;
+            font-weight: bold;
+        }
+
+        /* Keyword */
+        code > span.dt {
+            color: #902000;
+        }
+
+        /* DataType */
+        code > span.dv {
+            color: #40a070;
+        }
+
+        /* DecVal */
+        code > span.bn {
+            color: #40a070;
+        }
+
+        /* BaseN */
+        code > span.fl {
+            color: #40a070;
+        }
+
+        /* Float */
+        code > span.ch {
+            color: #4070a0;
+        }
+
+        /* Char */
+        code > span.st {
+            color: #4070a0;
+        }
+
+        /* String */
+        code > span.co {
+            color: #60a0b0;
+            font-style: italic;
+        }
+
+        /* Comment */
+        code > span.ot {
+            color: #007020;
+        }
+
+        /* Other */
+        code > span.al {
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        /* Alert */
+        code > span.fu {
+            color: #06287e;
+        }
+
+        /* Function */
+        code > span.er {
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        /* Error */
+        code > span.wa {
+            color: #60a0b0;
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        /* Warning */
+        code > span.cn {
+            color: #880000;
+        }
+
+        /* Constant */
+        code > span.sc {
+            color: #4070a0;
+        }
+
+        /* SpecialChar */
+        code > span.vs {
+            color: #4070a0;
+        }
+
+        /* VerbatimString */
+        code > span.ss {
+            color: #bb6688;
+        }
+
+        /* SpecialString */
+        code > span.im {
+        }
+
+        /* Import */
+        code > span.va {
+            color: #19177c;
+        }
+
+        /* Variable */
+        code > span.cf {
+            color: #007020;
+            font-weight: bold;
+        }
+
+        /* ControlFlow */
+        code > span.op {
+            color: #666666;
+        }
+
+        /* Operator */
+        code > span.bu {
+        }
+
+        /* BuiltIn */
+        code > span.ex {
+        }
+
+        /* Extension */
+        code > span.pp {
+            color: #bc7a00;
+        }
+
+        /* Preprocessor */
+        code > span.at {
+            color: #7d9029;
+        }
+
+        /* Attribute */
+        code > span.do {
+            color: #ba2121;
+            font-style: italic;
+        }
+
+        /* Documentation */
+        code > span.an {
+            color: #60a0b0;
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        /* Annotation */
+        code > span.cv {
+            color: #60a0b0;
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        /* CommentVar */
+        code > span.in {
+            color: #60a0b0;
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        /* Information */
+    </style>
 
 </head>
 
 <body>
 
-<!-- Navigation -->
 <!-- Navigation -->
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
@@ -162,6 +310,98 @@
             <hr>
             <p class="lead">Username: CHC. Password: OverErryThing.</p>
 
+            <p>When we visit the provided website and login using the given credentials we see that the website is made
+                up of nothing but a little css super mario game. There are no input boxes or query string parameters in
+                the url. As a result this leads us to believe the site is not injectable or vulnerable to XSS (though we
+                should never rule anything out).</p>
+
+            <p>We also take a look at the document cookies in order to get a better understanding of the system as a
+                whole.</p>
+
+            <p>Checking the sites cookies, we find the following:</p>
+
+<pre class="prettyprint">
+session: .eJw9zsFrgzAYBfB_ZeS8g8YNOmGHjlix8H1BSSPJpWjVxmjK6DrUlP7vkw12eJf34Me7k91YnUl8J081iUkeGNbSfKpt06EoKISbECgu4Juu8viKcjPX49pFe7qm03b3BV6-kcczOfbNv6PZOeAsCzQbPPqmR6cicEmEFiYupFNl4bhAowT24LTRpTSrM6JVlItDoMRHz9PCoZNG262HtBg4KwywjIJPFqAJ1evKxXYCdqLIkhCYNJztR21PCwr4c-xhRpG96FLN2jY92CHSJY5IccA0j7SD99_vn-3VVZf2ciPx7frdPn4AsaJa-g.C1balg.NZ3Hhz13PR-1L37NFSfeotkV0DU
+</pre>
+
+            <p>As we continue to gather information, we go back to the challenge page where we see a server binary is
+                provided. Taking a look at
+                this would be a logical next step. Given that python is a high level language that gets compiled to
+                bytecode (which doesn't protect the code) we can nearly fully decompile the .pyc. A tool like <a
+                        href="https://github.com/wibiti/uncompyle2">Uncompyle2</a> works well.</p>
+
+            <p>Before going through the effort of decompiling, we'll 'strings' the binary as a first step (as we usually
+                do).</p>
+
+            <p>strings provides the following output:</p>
+
+<pre class="prettyprint">
+[chc@chc:~ ] $ strings login.pyc
+Flaskt
+Responset
+redirectt
+url_fort
+requestt
+sessiont
+abortt
+render_template(
+LoginManagert
+UserMixint
+login_requiredt
+login_usert
+logout_user(
+timedeltaNt
+DEBUGt
+SECRET_KEYt
+LOLOLOL_I_Am_So_Secrett
+logint
+Userc
+CHCt
+OverErryThing(
+namet
+password(
+selfR
+login.pyt
+__init__
+  ...
+</pre>
+
+            <p>Reading through the strings output we see something that should catch our eye. The Secret Key was
+                hardcoded in login.py and is LOLOLOL_I_Am_So_Secret! We also can see that Flask is the web framework
+                that the server employs.</p>
+
+            <p>To recap, we now have a session cookie and a Flask secret key. Through Googling or prior knowledge, you
+                can find that a Flask app uses a secret key to sign the session cookie so that the client can't modify
+                it. What can be signed can also be unsigned.</p>
+
+            <p>The following script will decode the session cookie using the Flask secret key.</p>
+
+<pre class="prettyprint">
+import hashlib
+from itsdangerous import URLSafeTimedSerializer
+from flask.sessions import TaggedJSONSerializer
+
+secret_key="LOLOLOL_I_Am_So_Secret"
+cookie_str=".eJw9jk9rg0AUxL9K2XMPukZIhV7KRlF4T5TVsHspWv8-3VDSFHVDvnttDz0MDDPDj7mzcK56FtzZU80CljmDaHm21NR0KHMO7tEFjhvYpqss-lge13reMy_huzpN4RfY8oU9ntn72PxztGgGoMwF8TYhqUUbnPG8O-o9EDFXlBhFyipZjigmT1kkpHzC6LSh2TsZ-1oUHKN41TQPaEqDpCcU5QD25KABizzetNw3oncgKlZlPxYw8ZaK3k9_ubzg6Rk2xWFLZXbACByQyagonFD2B7S5USZ7_fv-2V5NdWkvNxbcrt_t4wcNiVvB.CyHtkQ.5Bl8L3gV4OO_tPqd8NJhdnHcwEY"
+def decode_flask_cookie(secret_key, cookie_str):
+    salt = 'cookie-session'
+    serializer = TaggedJSONSerializer()
+    signer_kwargs = {
+        'key_derivation': 'hmac',
+        'digest_method': hashlib.sha1
+    }
+    s = URLSafeTimedSerializer(secret_key, serializer=serializer, salt=salt, signer_kwargs = signer_kwargs)
+    return s.loads(cookie_str)
+
+print decode_flask_cookie(secret_key, cookie_str)
+</pre>
+
+            <p>The output is as follows:</p>
+
+<pre class="prettyprint">
+{u'Flag': 'CHC{d0n7_54v3_53cr37_k3y5_1n_53rv3r_f1l35}', u'_id': 'd7a24500d660fce5ccb87026b2fb63a5b497c3c64d4a26bfa29d564b1f9a6ef66d45a3146c37b2e564840e1c702b288995b7e69c2cc29484c412bb1d58874fbd', u'_permanent': True}
+</pre>
+
 
             <h3><b>Flag:</b> CHC{d0n7_54v3_53cr37_k3y5_1n_53rv3r_f1l35}</h3>
 
@@ -181,55 +421,74 @@
             <!-- Date/Time -->
             <p><i class="fa fa-clock-o"></i> Posted on January 15, 2017</p>
 
-            <hr>            
+            <hr>
 
-<p>Take <code>+</code> to also denote string concatenation in this write-up.</p>
-<h2 id="introduction">Introduction</h2>
-<p>(Have netcat installed)</p>
-<p>Run <code>echo &quot;test&quot; | nc chc.cs.cornell.edu 1339 | xxd</code> to get this output:</p>
-<pre><code>00000000: 4438 29c5 6703 a773 d984 bc20 5ab6 a147  D8).g..s... Z..G
-00000010: 120b 0b9a 49ff b1f7 fea7 16a3 e709 cf1c  ....I...........
-00000020: 76fb 8334 72ab 3708 f661 916a bc20 6d20  v..4r.7..a.j. m</code></pre>
-<p>Notice how each line is 16 bytes.</p>
-<p>From the source code, the <code>&quot;test&quot; + flag + padding</code> was encrypted using AES in ECB mode to give that output.</p>
-<p>The length of &quot;test&quot; is 4. From this line in the source code:</p>
-<pre><code>padding[16 - ( strlen(input_string) % 16 )] = &#39;\0&#39;;</code></pre>
-<p>it appears that the length of <code>padding</code> must be 12, which is 4 less than 16. So <code>padding</code> ensures that the length of <code>&quot;test&quot; + padding</code> is a multiple of 16.</p>
-<p>The <strong>block size</strong> is likely to be 16 bytes, or 128 bits.</p>
-<p>The output is a total of 48 bytes, and 16 of these were <code>&quot;test&quot; + padding</code> so the flag is <strong>32 bytes long</strong>.</p>
-<h3 id="more-about-aes-in-ecb-mode">More about AES in ECB mode</h3>
-<p>Try this:</p>
-<ol style="list-style-type: decimal">
-<li>Make a memorable ascii string of length <strong>block size</strong>, like &quot;AAAAAAAAAAAAAAAA&quot;</li>
-<li><p>Feed it to the net cat and see what it spits out.</p>
+            <p>Take <code>+</code> to also denote string concatenation in this write-up.</p>
+            <h2 id="introduction">Introduction</h2>
+            <p>(Have netcat installed)</p>
+            <p>Run <code>echo &quot;test&quot; | nc chc.cs.cornell.edu 1339 | xxd</code> to get this output:</p>
+<pre><code>00000000: 4438 29c5 6703 a773 d984 bc20 5ab6 a147 D8).g..s... Z..G
+    00000010: 120b 0b9a 49ff b1f7 fea7 16a3 e709 cf1c ....I...........
+    00000020: 76fb 8334 72ab 3708 f661 916a bc20 6d20 v..4r.7..a.j. m</code></pre>
+            <p>Notice how each line is 16 bytes.</p>
+            <p>From the source code, the <code>&quot;test&quot; + flag + padding</code> was encrypted using AES in ECB
+                mode to give that output.</p>
+            <p>The length of &quot;test&quot; is 4. From this line in the source code:</p>
+            <pre><code>padding[16 - ( strlen(input_string) % 16 )] = &#39;\0&#39;;</code></pre>
+            <p>it appears that the length of <code>padding</code> must be 12, which is 4 less than 16. So
+                <code>padding</code> ensures that the length of <code>&quot;test&quot; + padding</code> is a multiple of
+                16.</p>
+            <p>The <strong>block size</strong> is likely to be 16 bytes, or 128 bits.</p>
+            <p>The output is a total of 48 bytes, and 16 of these were <code>&quot;test&quot; + padding</code> so the
+                flag is <strong>32 bytes long</strong>.</p>
+            <h3 id="more-about-aes-in-ecb-mode">More about AES in ECB mode</h3>
+            <p>Try this:</p>
+            <ol style="list-style-type: decimal">
+                <li>Make a memorable ascii string of length <strong>block size</strong>, like &quot;AAAAAAAAAAAAAAAA&quot;
+                </li>
+                <li><p>Feed it to the net cat and see what it spits out.</p>
 <pre><code>&gt; echo &quot;AAAAAAAAAAAAAAAA&quot; | nc chc.cs.cornell.edu 1339 | xxd
-00000000: a79e f6d9 9306 bfdb 796a caf9 c4a6 4823  ........yj....H#
-00000010: c252 b375 f5e4 46f5 c64c bcaa ab3d 2899  .R.u..F..L...=(.
-00000020: 0910 03b7 7cbc 9122 df0c 226c a6b3 d81b  ....|..&quot;..&quot;l....
-00000030: d207 48cd e1ee a272 7399 f30c 0493 1fa7  ..H....rs.......</code></pre></li>
-<li><p>Double the string (concatenate it with itself) and do it again.</p>
+    00000000: a79e f6d9 9306 bfdb 796a caf9 c4a6 4823 ........yj....H#
+    00000010: c252 b375 f5e4 46f5 c64c bcaa ab3d 2899 .R.u..F..L...=(.
+    00000020: 0910 03b7 7cbc 9122 df0c 226c a6b3 d81b ....|..&quot;..&quot;l....
+    00000030: d207 48cd e1ee a272 7399 f30c 0493 1fa7 ..H....rs.......</code></pre>
+                </li>
+                <li><p>Double the string (concatenate it with itself) and do it again.</p>
 <pre><code>&gt; echo &quot;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&quot; | nc chc.cs.cornell.edu 1339 | xxd
-00000000: a79e f6d9 9306 bfdb 796a caf9 c4a6 4823  ........yj....H#
-00000010: a79e f6d9 9306 bfdb 796a caf9 c4a6 4823  ........yj....H#
-00000020: c252 b375 f5e4 46f5 c64c bcaa ab3d 2899  .R.u..F..L...=(.
-00000030: 0910 03b7 7cbc 9122 df0c 226c a6b3 d81b  ....|..&quot;..&quot;l....
-00000040: d207 48cd e1ee a272 7399 f30c 0493 1fa7  ..H....rs.......</code></pre></li>
-</ol>
-<p>Notice how the first and the second blocks are the same ciphertext, just as in the plaintext.</p>
-<p>The gaping flaw of ECB is, identical blocks of input produce identical ciphertext blocks. You can exploit this.</p>
-<h2 id="decrypting-the-flag-general-idea">Decrypting the flag (General Idea)</h2>
-<ol style="list-style-type: decimal">
-<li>Make an input of size 15 like &quot;AAAAAAAAAAAAAAA&quot;. This is one byte short of the block size.</li>
-<li>If the input is size 15, and it gets concatenated with flag, then the 16th byte that gets encrypted must be the first byte of the flag.</li>
-<li>Make a dictionary of the outputs of &quot;AAAAAAAAAAAAAAAa&quot;, &quot;AAAAAAAAAAAAAAAb&quot;, ... for <em>every</em> printable char. You want one of these chars to be the first byte of the flag.</li>
-<li>One of the outputs will match the outputs from step 1. This is the first byte. (spoiler: The capital letter C is the first byte)</li>
-<li>Then repeat step 1 with an input of size 14: &quot;AAAAAAAAAAAAAA&quot; (2 bytes short)</li>
-<li>Make a dictionary for &quot;AAAAAAAAAAAAAACa&quot;, &quot;AAAAAAAAAAAAAACb&quot;, ...</li>
-<li>Keep going until you have decrypted the whole flag. Automate it.</li>
-</ol>
-<h2 id="automate">Automate!</h2>
-<p>Quick and dirty Go program.</p>
-<div class="sourceCode"><table class="sourceCode go numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre style="border: 0px;">1
+    00000000: a79e f6d9 9306 bfdb 796a caf9 c4a6 4823 ........yj....H#
+    00000010: a79e f6d9 9306 bfdb 796a caf9 c4a6 4823 ........yj....H#
+    00000020: c252 b375 f5e4 46f5 c64c bcaa ab3d 2899 .R.u..F..L...=(.
+    00000030: 0910 03b7 7cbc 9122 df0c 226c a6b3 d81b ....|..&quot;..&quot;l....
+    00000040: d207 48cd e1ee a272 7399 f30c 0493 1fa7 ..H....rs.......</code></pre>
+                </li>
+            </ol>
+            <p>Notice how the first and the second blocks are the same ciphertext, just as in the plaintext.</p>
+            <p>The gaping flaw of ECB is, identical blocks of input produce identical ciphertext blocks. You can exploit
+                this.</p>
+            <h2 id="decrypting-the-flag-general-idea">Decrypting the flag (General Idea)</h2>
+            <ol style="list-style-type: decimal">
+                <li>Make an input of size 15 like &quot;AAAAAAAAAAAAAAA&quot;. This is one byte short of the block
+                    size.
+                </li>
+                <li>If the input is size 15, and it gets concatenated with flag, then the 16th byte that gets encrypted
+                    must be the first byte of the flag.
+                </li>
+                <li>Make a dictionary of the outputs of &quot;AAAAAAAAAAAAAAAa&quot;, &quot;AAAAAAAAAAAAAAAb&quot;, ...
+                    for <em>every</em> printable char. You want one of these chars to be the first byte of the flag.
+                </li>
+                <li>One of the outputs will match the outputs from step 1. This is the first byte. (spoiler: The capital
+                    letter C is the first byte)
+                </li>
+                <li>Then repeat step 1 with an input of size 14: &quot;AAAAAAAAAAAAAA&quot; (2 bytes short)</li>
+                <li>Make a dictionary for &quot;AAAAAAAAAAAAAACa&quot;, &quot;AAAAAAAAAAAAAACb&quot;, ...</li>
+                <li>Keep going until you have decrypted the whole flag. Automate it.</li>
+            </ol>
+            <h2 id="automate">Automate!</h2>
+            <p>Quick and dirty Go program.</p>
+            <div class="sourceCode">
+                <table class="sourceCode go numberLines">
+                    <tr class="sourceCode">
+                        <td class="lineNumbers"><pre style="border: 0px;">1
 2
 3
 4
@@ -279,90 +538,102 @@
 48
 49
 50
-</pre></td><td class="sourceCode"><pre style="border: 0px;"><code class="sourceCode go"><span class="kw">package</span> main
+</pre>
+                        </td>
+                        <td class="sourceCode"><pre style="border: 0px;"><code class="sourceCode go"><span class="kw">package</span>
+                            main
 
-<span class="kw">import</span> (
-    <span class="st">&quot;bytes&quot;</span>
-    <span class="st">&quot;log&quot;</span>
-    <span class="st">&quot;net&quot;</span>
-    <span class="st">&quot;strings&quot;</span>
-)
+                            <span class="kw">import</span> (
+                            <span class="st">&quot;bytes&quot;</span>
+                            <span class="st">&quot;log&quot;</span>
+                            <span class="st">&quot;net&quot;</span>
+                            <span class="st">&quot;strings&quot;</span>
+                            )
 
-<span class="kw">func</span> getThreeBlocks(input <span class="dt">string</span>) [<span class="dv">48</span>]<span class="dt">byte</span> {
-    conn, err := net.Dial(<span class="st">&quot;tcp&quot;</span>, <span class="st">&quot;chc.cs.cornell.edu:1339&quot;</span>)
-    <span class="kw">defer</span> conn.Close()
-    <span class="kw">if</span> err != <span class="ot">nil</span> {
-        log.Fatal(err)
-    }
-    _, err = conn.Write([]<span class="dt">byte</span>(input))
-    <span class="kw">if</span> err != <span class="ot">nil</span> {
-        log.Fatal(err)
-    }
-    conn.(*net.TCPConn).CloseWrite()
+                            <span class="kw">func</span> getThreeBlocks(input <span class="dt">string</span>) [<span
+                                    class="dv">48</span>]<span class="dt">byte</span> {
+                            conn, err := net.Dial(<span class="st">&quot;tcp&quot;</span>, <span class="st">&quot;chc.cs.cornell.edu:1339&quot;</span>)
+                            <span class="kw">defer</span> conn.Close()
+                            <span class="kw">if</span> err != <span class="ot">nil</span> {
+                            log.Fatal(err)
+                            }
+                            _, err = conn.Write([]<span class="dt">byte</span>(input))
+                            <span class="kw">if</span> err != <span class="ot">nil</span> {
+                            log.Fatal(err)
+                            }
+                            conn.(*net.TCPConn).CloseWrite()
 
-    <span class="kw">var</span> buf [<span class="dv">48</span>]<span class="dt">byte</span>
-    conn.Read(buf[:])
-    <span class="kw">return</span> buf
-}
+                            <span class="kw">var</span> buf [<span class="dv">48</span>]<span class="dt">byte</span>
+                            conn.Read(buf[:])
+                            <span class="kw">return</span> buf
+                            }
 
-<span class="kw">const</span> printable <span class="dt">string</span> = <span class="st">&quot;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!</span><span class="ch">\&quot;</span><span class="st">#$%&amp;&#39;()*+,-./:;&lt;=&gt;?@[</span><span class="ch">\\</span><span class="st">]^_`{|}~&quot;</span>
-<span class="kw">const</span> flagLen <span class="dt">int</span> = <span class="dv">32</span>
+                            <span class="kw">const</span> printable <span class="dt">string</span> = <span class="st">&quot;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!</span><span
+                                    class="ch">\&quot;</span><span class="st">#$%&amp;&#39;()*+,-./:;&lt;=&gt;?@[</span><span
+                                    class="ch">\\</span><span class="st">]^_`{|}~&quot;</span>
+                            <span class="kw">const</span> flagLen <span class="dt">int</span> = <span
+                                    class="dv">32</span>
 
-<span class="kw">func</span> main() {
-    known := bytes.NewBufferString(<span class="st">&quot;&quot;</span>) <span class="co">// Technically you can write &quot;CHC{&quot; here</span>
+                            <span class="kw">func</span> main() {
+                            known := bytes.NewBufferString(<span class="st">&quot;&quot;</span>) <span class="co">// Technically you can write &quot;CHC{&quot; here</span>
 
-outer:
-    <span class="kw">for</span> known.Len() != flagLen { <span class="co">// while known.Len() != flagLen:</span>
-        preambleLen := flagLen - known.Len() + <span class="dv">15</span>
-        preamble := strings.Repeat(<span class="st">&quot;A&quot;</span>, preambleLen)
+                            outer:
+                            <span class="kw">for</span> known.Len() != flagLen { <span class="co">// while known.Len() != flagLen:</span>
+                            preambleLen := flagLen - known.Len() + <span class="dv">15</span>
+                            preamble := strings.Repeat(<span class="st">&quot;A&quot;</span>, preambleLen)
 
-        goal := getThreeBlocks(preamble)
+                            goal := getThreeBlocks(preamble)
 
-        <span class="kw">for</span> _, char := <span class="kw">range</span> printable { <span class="co">// for char in printable: </span>
-            try := getThreeBlocks(preamble + known.String() + <span class="dt">string</span>(char))
-            <span class="kw">if</span> try == goal {
-                known.WriteRune(char)
-                log.Println(known.String())
-                <span class="kw">continue</span> outer
-            }
-        }
-        log.Fatalln(<span class="st">&quot;cannot continue&quot;</span>)
-    }
-}</code></pre></td></tr></table></div>
-<h3 id="output">Output</h3>
+                            <span class="kw">for</span> _, char := <span class="kw">range</span> printable { <span
+                                    class="co">// for char in printable: </span>
+                            try := getThreeBlocks(preamble + known.String() + <span class="dt">string</span>(char))
+                            <span class="kw">if</span> try == goal {
+                            known.WriteRune(char)
+                            log.Println(known.String())
+                            <span class="kw">continue</span> outer
+                            }
+                            }
+                            log.Fatalln(<span class="st">&quot;cannot continue&quot;</span>)
+                            }
+                            }</code></pre>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <h3 id="output">Output</h3>
 <pre><code>2017/01/10 07:59:59 C
-2017/01/10 08:00:07 CH
-2017/01/10 08:00:13 CHC
-2017/01/10 08:00:28 CHC{
-2017/01/10 08:00:32 CHC{n
-2017/01/10 08:00:32 CHC{n0
-2017/01/10 08:00:38 CHC{n0w
-2017/01/10 08:00:52 CHC{n0w_
-2017/01/10 08:00:57 CHC{n0w_s
-2017/01/10 08:00:58 CHC{n0w_s3
-2017/01/10 08:00:58 CHC{n0w_s33
-2017/01/10 08:01:13 CHC{n0w_s33_
-2017/01/10 08:01:27 CHC{n0w_s33__
-2017/01/10 08:01:29 CHC{n0w_s33__7
-2017/01/10 08:01:32 CHC{n0w_s33__7h
-2017/01/10 08:01:33 CHC{n0w_s33__7h4
-2017/01/10 08:01:34 CHC{n0w_s33__7h47
-2017/01/10 08:01:35 CHC{n0w_s33__7h475
-2017/01/10 08:01:50 CHC{n0w_s33__7h475_
-2017/01/10 08:01:51 CHC{n0w_s33__7h475_4
-2017/01/10 08:02:06 CHC{n0w_s33__7h475_4_
-2017/01/10 08:02:13 CHC{n0w_s33__7h475_4_F
-2017/01/10 08:02:18 CHC{n0w_s33__7h475_4_Fu
-2017/01/10 08:02:18 CHC{n0w_s33__7h475_4_Fu1
-2017/01/10 08:02:22 CHC{n0w_s33__7h475_4_Fu1l
-2017/01/10 08:02:37 CHC{n0w_s33__7h475_4_Fu1l_
-2017/01/10 08:02:44 CHC{n0w_s33__7h475_4_Fu1l_H
-2017/01/10 08:02:44 CHC{n0w_s33__7h475_4_Fu1l_H0
-2017/01/10 08:02:49 CHC{n0w_s33__7h475_4_Fu1l_H0u
-2017/01/10 08:02:50 CHC{n0w_s33__7h475_4_Fu1l_H0u5
-2017/01/10 08:02:51 CHC{n0w_s33__7h475_4_Fu1l_H0u53
-2017/01/10 08:03:06 CHC{n0w_s33__7h475_4_Fu1l_H0u53}</code></pre>
-<h3 id="flag-chcn0w_s33__7h475_4_fu1l_h0u53">Flag: CHC{n0w_s33__7h475_4_Fu1l_H0u53}</h3>
+    2017/01/10 08:00:07 CH
+    2017/01/10 08:00:13 CHC
+    2017/01/10 08:00:28 CHC{
+    2017/01/10 08:00:32 CHC{n
+    2017/01/10 08:00:32 CHC{n0
+    2017/01/10 08:00:38 CHC{n0w
+    2017/01/10 08:00:52 CHC{n0w_
+    2017/01/10 08:00:57 CHC{n0w_s
+    2017/01/10 08:00:58 CHC{n0w_s3
+    2017/01/10 08:00:58 CHC{n0w_s33
+    2017/01/10 08:01:13 CHC{n0w_s33_
+    2017/01/10 08:01:27 CHC{n0w_s33__
+    2017/01/10 08:01:29 CHC{n0w_s33__7
+    2017/01/10 08:01:32 CHC{n0w_s33__7h
+    2017/01/10 08:01:33 CHC{n0w_s33__7h4
+    2017/01/10 08:01:34 CHC{n0w_s33__7h47
+    2017/01/10 08:01:35 CHC{n0w_s33__7h475
+    2017/01/10 08:01:50 CHC{n0w_s33__7h475_
+    2017/01/10 08:01:51 CHC{n0w_s33__7h475_4
+    2017/01/10 08:02:06 CHC{n0w_s33__7h475_4_
+    2017/01/10 08:02:13 CHC{n0w_s33__7h475_4_F
+    2017/01/10 08:02:18 CHC{n0w_s33__7h475_4_Fu
+    2017/01/10 08:02:18 CHC{n0w_s33__7h475_4_Fu1
+    2017/01/10 08:02:22 CHC{n0w_s33__7h475_4_Fu1l
+    2017/01/10 08:02:37 CHC{n0w_s33__7h475_4_Fu1l_
+    2017/01/10 08:02:44 CHC{n0w_s33__7h475_4_Fu1l_H
+    2017/01/10 08:02:44 CHC{n0w_s33__7h475_4_Fu1l_H0
+    2017/01/10 08:02:49 CHC{n0w_s33__7h475_4_Fu1l_H0u
+    2017/01/10 08:02:50 CHC{n0w_s33__7h475_4_Fu1l_H0u5
+    2017/01/10 08:02:51 CHC{n0w_s33__7h475_4_Fu1l_H0u53
+    2017/01/10 08:03:06 CHC{n0w_s33__7h475_4_Fu1l_H0u53}</code></pre>
+            <h3 id="flag-chcn0w_s33__7h475_4_fu1l_h0u53">Flag: CHC{n0w_s33__7h475_4_Fu1l_H0u53}</h3>
 
             <hr>
 
@@ -397,9 +668,11 @@ outer:
             <p><i class="fa fa-clock-o"></i> Posted on January 15, 2017</p>
             <hr>
             <p class="lead">There's a dragon afoot, we need a hero.</p>
-            <p>This challenge involves finding the key hidden inside an executable <i>dragons</i>, we are given a resources page which links to a list of x86 disassemblers to work with.</p>
+            <p>This challenge involves finding the key hidden inside an executable <i>dragons</i>, we are given a
+                resources page which links to a list of x86 disassemblers to work with.</p>
 
-            <p>Since I'm on mac I decided to work with the nice GUI disassembler called <a href="https://www.hopperapp.com/">Hopper Disassembler v3</a> for the length of this solution.</p>
+            <p>Since I'm on mac I decided to work with the nice GUI disassembler called <a
+                    href="https://www.hopperapp.com/">Hopper Disassembler v3</a> for the length of this solution.</p>
 
             <p>First I try running the executable in terminal to get familiar with the output. I'm greeted with:</p>
 
@@ -415,7 +688,9 @@ So, where do you start your adventure?
 3) The old groves
 </pre>
 
-            <p>Opening up the executable reveals a <i>TEXT</i> section and a series of functions, as usual. A brief scan through the text section reveals nothing that looks like a key, so we should check out the execution itself, it must somehow build a key.</p> 
+            <p>Opening up the executable reveals a <i>TEXT</i> section and a series of functions, as usual. A brief scan
+                through the text section reveals nothing that looks like a key, so we should check out the execution
+                itself, it must somehow build a key.</p>
             <p>We can scroll down to <tt>_main</tt> to how execution starts:</p>
 
 <pre class="prettyprint">
@@ -431,7 +706,15 @@ So, where do you start your adventure?
 </pre>
 
             <p>We can recognize some familiar text thanks to the inplace strings on the right-hand-side.
-Looking around we can also spot a call to a function called <tt>_startGame</tt>, in which we find calls to <tt>_dead</tt>, <tt>_playerChoice</tt>, <tt>_greatCaves</tt>, <tt>_cityCenter</tt>, and <tt>_oldGroves</tt>. All the functions take the argument <tt>[ss:rbp+var_8]</tt>, <tt>_playerChoice</tt> takes the additional arguments <tt>"gae"</tt> and <tt>3</tt>. Here we can refer back to the execution: We were presented with three possible paths, the great caves, the city center, and the old groves. It's likely not a coincidence that <tt>_playerChoice</tt> takes the argument <tt>3</tt> and then the other functions called are named in the likeness of the options given (therefore <tt>[ss:rbp+var_8]</tt> likely has something to do with the player). That leaves the argument <tt>"gae"</tt>. Let's look at one more example to see what this argument could be: let's jump to <tt>_cityCenter</tt></p>
+                Looking around we can also spot a call to a function called <tt>_startGame</tt>, in which we find calls
+                to <tt>_dead</tt>, <tt>_playerChoice</tt>, <tt>_greatCaves</tt>, <tt>_cityCenter</tt>, and <tt>_oldGroves</tt>.
+                All the functions take the argument <tt>[ss:rbp+var_8]</tt>, <tt>_playerChoice</tt> takes the additional
+                arguments <tt>"gae"</tt> and <tt>3</tt>. Here we can refer back to the execution: We were presented with
+                three possible paths, the great caves, the city center, and the old groves. It's likely not a
+                coincidence that <tt>_playerChoice</tt> takes the argument <tt>3</tt> and then the other functions
+                called are named in the likeness of the options given (therefore <tt>[ss:rbp+var_8]</tt> likely has
+                something to do with the player). That leaves the argument <tt>"gae"</tt>. Let's look at one more
+                example to see what this argument could be: let's jump to <tt>_cityCenter</tt></p>
 
             <p>In execution typing <tt>2</tt> brings us to the city center with the following prompt:</p>
 <pre class="prettyprint">
@@ -444,16 +727,22 @@ The city center is full of activity! There's so much to do!
 5) Go to the caves
 </pre>
 
-            <p>In the disassembler we see that <tt>_playerChoice</tt> is now presented with the arguments <tt>[ss:rbp+var_8]</tt>, <tt>"f.j_r"</tt>, and <tt>5</tt>. So we again have 5 options and the parameter 5 being passed. Also we have a string of length 5 being passed. If the executable is building the key this is likely how it's being done. Let's assume that the key is built using the characters at the same index as the path taken, i.e. in the string "gae", should you choose the first path then the key with gain the letter "g" etc...</p>
+            <p>In the disassembler we see that <tt>_playerChoice</tt> is now presented with the arguments <tt>[ss:rbp+var_8]</tt>,
+                <tt>"f.j_r"</tt>, and <tt>5</tt>. So we again have 5 options and the parameter 5 being passed. Also we
+                have a string of length 5 being passed. If the executable is building the key this is likely how it's
+                being done. Let's assume that the key is built using the characters at the same index as the path taken,
+                i.e. in the string "gae", should you choose the first path then the key with gain the letter "g" etc...
+            </p>
 
-            <p>Going through the executable we can make a map of paths between function calls and their associated key strings:</p>
+            <p>Going through the executable we can make a map of paths between function calls and their associated key
+                strings:</p>
 <pre class="prettyprint">
 <code class="language-python">
-paths = {
+    paths = {
     '_start' : ('gae',['_greatCaves','_cityCenter','_oldGroves']),
     '_dead' : ('',[]),
     '_greatCaves' : ('au',['_enterDepths','_climbTop']),
-                              #_talkMadman
+    #_talkMadman
     '_cityCenter' : ('f.j_r',['_cityCenter','_healer','_oldGroves','_tavern','_greatCaves']),
     '_oldGroves' : ('',[]),
     #'_talkMadman' : '_cityCenter',
@@ -470,46 +759,52 @@ paths = {
     '_failedAttack' : ('',[]),
     '_arrowAttack' : ('ooox',['_end','_end','_end','_dead']), # Didn't call anything, made a new _end category
     '_end' : ('',[])
-}
+    }
 </code>
 </pre>
-            <p><tt>_talkMadman</tt> seems to be special because no choice is made, so we just pretend <tt>_cityCenter</tt> links back to itself in that case. To deal with some of the ambiguous options we added a <tt>_dead</tt> path which we populate manually based on flavor text (i.e. <i>"The dragon seizes the oppurtunity of your mercy to lunge forward and snap you in two with its mighty jaws"</i> in <tt>_arrowAttack</tt>). We also add <tt>_end</tt> where things end but the flavortext doesn't seem to suggest death.</p>
+            <p><tt>_talkMadman</tt> seems to be special because no choice is made, so we just pretend
+                <tt>_cityCenter</tt> links back to itself in that case. To deal with some of the ambiguous options we
+                added a <tt>_dead</tt> path which we populate manually based on flavor text (i.e. <i>"The dragon seizes
+                    the oppurtunity of your mercy to lunge forward and snap you in two with its mighty jaws"</i> in <tt>_arrowAttack</tt>).
+                We also add <tt>_end</tt> where things end but the flavortext doesn't seem to suggest death.</p>
 
-            <p>Now let's find every path from <tt>_start</tt> to <tt>_end</tt> of length up to 16 (we can increase this if needed later): We will consider the paths above to be a graph and use a basic pathfinding algorithm. To output shorter paths first we will have the priority only based on number of loops:</p>
+            <p>Now let's find every path from <tt>_start</tt> to <tt>_end</tt> of length up to 16 (we can increase this
+                if needed later): We will consider the paths above to be a graph and use a basic pathfinding algorithm.
+                To output shorter paths first we will have the priority only based on number of loops:</p>
 
 <pre class="prettyprint">
 <code class="language-python">
-def keygen(maxkeylen = 16):
+    def keygen(maxkeylen = 16):
     # visits[nodename] = (number of times visited node)
     visits = {}
     current_top = 0
     paths_heap = []
     for loc in paths.keys():
-        visits[loc] = 0
+    visits[loc] = 0
 
     paths_heap.append([('_start',[],'')])
 
     while len(paths_heap) > 0:
-        curr_loc, path_so_far, key_so_far = paths_heap[0].pop()
-        visits[curr_loc] = current_top+1
-        next_letters, next_locs = paths[curr_loc]
-        if len(next_locs) == 0 and curr_loc == '_end':
-            yield key_so_far, ",".join(str(i) for i in path_so_far)
-        elif len(path_so_far) < maxkeylen:
-            for i in range(len(next_letters)):
-                next_letter, next_loc = next_letters[i], next_locs[i]
-                times_seen = visits[next_loc]
+    curr_loc, path_so_far, key_so_far = paths_heap[0].pop()
+    visits[curr_loc] = current_top+1
+    next_letters, next_locs = paths[curr_loc]
+    if len(next_locs) == 0 and curr_loc == '_end':
+    yield key_so_far, ",".join(str(i) for i in path_so_far)
+    elif len(path_so_far) < maxkeylen:
+    for i in range(len(next_letters)):
+    next_letter, next_loc = next_letters[i], next_locs[i]
+    times_seen = visits[next_loc]
 
-                heap_index = times_seen - current_top
-                while len(paths_heap) <= heap_index:
-                    paths_heap.append([])
-                paths_heap[heap_index].append((next_loc, path_so_far + [i+1], key_so_far + next_letter))
-        # Nothing left that we've visited only [current_top] times
-        while len(paths_heap)>0 and len(paths_heap[0]) == 0:
-            current_top += 1
-            paths_heap.pop(0)
+    heap_index = times_seen - current_top
+    while len(paths_heap) <= heap_index:
+    paths_heap.append([])
+    paths_heap[heap_index].append((next_loc, path_so_far + [i+1], key_so_far + next_letter))
+    # Nothing left that we've visited only [current_top] times
+    while len(paths_heap)>0 and len(paths_heap[0]) == 0:
+    current_top += 1
+    paths_heap.pop(0)
 
-for key,path in keygen():
+    for key,path in keygen():
     print(key + "\t" + path)
 </code>
 </pre>
@@ -522,25 +817,27 @@ arue_hero   2,5,2,2,1,2,1,1,1
 gue_hero    1,2,2,1,2,1,1,3
 ...
 </pre>
-            <p>None of these first few allow us to <i>kill the dragon</i>, but it looks like the all end in <tt>hero</tt>, and possibly <tt>_</tt> demarks spaces, let's try considering only keys which are made of english words separated by underscores:</p>
+            <p>None of these first few allow us to <i>kill the dragon</i>, but it looks like the all end in
+                <tt>hero</tt>, and possibly <tt>_</tt> demarks spaces, let's try considering only keys which are made of
+                english words separated by underscores:</p>
 
 <pre class="prettyprint">
 <code class="language-python">
-import enchant
-d = enchant.Dict("en_US")
+    import enchant
+    d = enchant.Dict("en_US")
 
-...
+    ...
 
-def check_all_words(words):
+    def check_all_words(words):
     for word in words:
-        if not d.check(word):
-            return False
+    if not d.check(word):
+    return False
     return True
 
-for key,path in keygen():
+    for key,path in keygen():
     words = key.split('_')
     if check_all_words(words):
-        print(key+"\t"+path)
+    print(key+"\t"+path)
 </code>
 </pre>
             <p>This outputs:</p>
@@ -552,10 +849,16 @@ a_x_true_hero   2,4,2,4,1,5,2,2,1,2,1,1,3
 a_x_true_hero   2,4,2,4,1,5,2,2,1,2,1,1,2
 ...
 </pre>
-            <p>It looks like this may be our key, chances are that the <tt>CHC{...}</tt> are added somewhere else in the executable, but by inputting the choices <tt>2,4,1,5,2,2,1,2,1,1,3</tt> we can verify that we have the correct combination to defeat the dragon. If we open up the executable now in a debugger and input the combination I'm sure we would find <tt>CHC{a_true_hero}</tt> somewhere, but we can also just try to input that into the CHC website (it works).</p>
+            <p>It looks like this may be our key, chances are that the <tt>CHC{...}</tt> are added somewhere else in the
+                executable, but by inputting the choices <tt>2,4,1,5,2,2,1,2,1,1,3</tt> we can verify that we have the
+                correct combination to defeat the dragon. If we open up the executable now in a debugger and input the
+                combination I'm sure we would find <tt>CHC{a_true_hero}</tt> somewhere, but we can also just try to
+                input that into the CHC website (it works).</p>
 
             <h3>Note:</h3>
-            <p>This challenge could also be solved by just playing with the combinations and checking the debugger every time, but that would take a while and it would be hard to tell if you were making progress. I like the above solution because it's easy to tell when progress is being made.</p>
+            <p>This challenge could also be solved by just playing with the combinations and checking the debugger every
+                time, but that would take a while and it would be hard to tell if you were making progress. I like the
+                above solution because it's easy to tell when progress is being made.</p>
 
             <h3><b>Flag:</b> CHC{a_true_hero}</h3>
 
