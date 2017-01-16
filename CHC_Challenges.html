@@ -738,7 +738,7 @@ The city center is full of activity! There's so much to do!
                 strings:</p>
 <pre class="prettyprint">
 <code class="language-python">
-    paths = {
+paths = {
     '_start' : ('gae',['_greatCaves','_cityCenter','_oldGroves']),
     '_dead' : ('',[]),
     '_greatCaves' : ('au',['_enterDepths','_climbTop']),
@@ -759,7 +759,7 @@ The city center is full of activity! There's so much to do!
     '_failedAttack' : ('',[]),
     '_arrowAttack' : ('ooox',['_end','_end','_end','_dead']), # Didn't call anything, made a new _end category
     '_end' : ('',[])
-    }
+}
 </code>
 </pre>
             <p><tt>_talkMadman</tt> seems to be special because no choice is made, so we just pretend
@@ -774,7 +774,7 @@ The city center is full of activity! There's so much to do!
 
 <pre class="prettyprint">
 <code class="language-python">
-    def keygen(maxkeylen = 16):
+def keygen(maxkeylen = 16):
     # visits[nodename] = (number of times visited node)
     visits = {}
     current_top = 0
@@ -785,26 +785,26 @@ The city center is full of activity! There's so much to do!
     paths_heap.append([('_start',[],'')])
 
     while len(paths_heap) > 0:
-    curr_loc, path_so_far, key_so_far = paths_heap[0].pop()
-    visits[curr_loc] = current_top+1
-    next_letters, next_locs = paths[curr_loc]
-    if len(next_locs) == 0 and curr_loc == '_end':
-    yield key_so_far, ",".join(str(i) for i in path_so_far)
-    elif len(path_so_far) < maxkeylen:
-    for i in range(len(next_letters)):
-    next_letter, next_loc = next_letters[i], next_locs[i]
-    times_seen = visits[next_loc]
+        curr_loc, path_so_far, key_so_far = paths_heap[0].pop()
+        visits[curr_loc] = current_top+1
+        next_letters, next_locs = paths[curr_loc]
+        if len(next_locs) == 0 and curr_loc == '_end':
+            yield key_so_far, ",".join(str(i) for i in path_so_far)
+        elif len(path_so_far) < maxkeylen:
+            for i in range(len(next_letters)):
+                next_letter, next_loc = next_letters[i], next_locs[i]
+                times_seen = visits[next_loc]
 
-    heap_index = times_seen - current_top
-    while len(paths_heap) <= heap_index:
-    paths_heap.append([])
-    paths_heap[heap_index].append((next_loc, path_so_far + [i+1], key_so_far + next_letter))
-    # Nothing left that we've visited only [current_top] times
-    while len(paths_heap)>0 and len(paths_heap[0]) == 0:
-    current_top += 1
-    paths_heap.pop(0)
+                heap_index = times_seen - current_top
+                while len(paths_heap) <= heap_index:
+                    paths_heap.append([])
+                    paths_heap[heap_index].append((next_loc, path_so_far + [i+1], key_so_far + next_letter))
+        # Nothing left that we've visited only [current_top] times
+        while len(paths_heap)>0 and len(paths_heap[0]) == 0:
+            current_top += 1
+            paths_heap.pop(0)
 
-    for key,path in keygen():
+for key,path in keygen():
     print(key + "\t" + path)
 </code>
 </pre>
@@ -823,21 +823,21 @@ gue_hero    1,2,2,1,2,1,1,3
 
 <pre class="prettyprint">
 <code class="language-python">
-    import enchant
-    d = enchant.Dict("en_US")
+import enchant
+d = enchant.Dict("en_US")
 
-    ...
+...
 
-    def check_all_words(words):
+def check_all_words(words):
     for word in words:
-    if not d.check(word):
-    return False
+        if not d.check(word):
+            return False
     return True
 
-    for key,path in keygen():
+for key,path in keygen():
     words = key.split('_')
     if check_all_words(words):
-    print(key+"\t"+path)
+        print(key+"\t"+path)
 </code>
 </pre>
             <p>This outputs:</p>
