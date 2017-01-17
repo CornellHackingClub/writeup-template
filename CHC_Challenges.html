@@ -651,9 +651,59 @@ print decode_flask_cookie(secret_key, cookie_str)
             <p><i class="fa fa-clock-o"></i> Posted on January 15, 2017</p>
             <hr>
             <p class="lead">I know these guys are up to something. Just not sure what.</p>
+            <p>This challenge involves finding the flag as discussed by two <i>l33t h4ck3rs</i> on an IRC chat. We are
+            presented with a .pcap file of network traffic.</p>
+
+            <p>The first step when given a .pcap file is to open it in some intuitive network traffic editor - the best
+            of which is WireShark. <i>(.pcap, as can be found with five minutes of googling, is an encapsulation for
+            saved network traffic.)</i> There are other alternatives, such as using tcpdump, but this is nowhere near
+            as fast to use and abuse as Wireshark is.</p>
+
+            <p>Opening the file is as simple as installing wireshark (installer available for Windows, homebrew for OSX,
+            packages available for most distros), and selecting File->Open your .pcap file. What we then see is something
+            like below:</p>
+
+            <img src="static/img/irc_wireshark.png">
+
+            <p>The first thing we notice (with a bit of scrolling), is that there are only two computers talking to each other.
+                We can tell because we can only see two unique IPs populating the "Source" and "Destination" columns. As a single sentence primer
+                for network traffic - it is essentially "packets" of data (binary, ascii, whatever) that are sent from one computer to another.
+            Wireshark helpfully infers the application producing the traffic (based on port, protocol and some other heuristics),
+            and hints that it may be IRC. Note that this is always just a guess, and there is physically no way to _know_ what
+            program is producing traffic, as any program can produce any arbitrary traffic.</p>
+
+            <p>A golden feature of wireshark is the ability to "Follow" a TCP network stream - essentially this prints all the data
+            that has been sent over a single connection as can be inferred from the .pcap file. normal IRC is nice in this way, because
+            all chat data is simpy piped down a single TCP port as plain text. </p>
+
+            <img src="static/img/follow.png">
+
+            <p>Now, we see the following (below), which is essentially all the data sent over the connection. We can quickly see the back an d
+            forth between two people over the IRC - one person called "ev3nk1ng" and one called "l0gic". The easiest way to read this, and to
+            understand what is going on is to simply read the whitepaper on IRC - also known as RFC2812 (https://tools.ietf.org/html/rfc2812). However
+            this is not really necessary, as it is fairly simply to figure out what is going on (at least to the extent we are interested). </p>
+
+            <p>So, apparently, some <i>thing</i> is going on, and the computer being listened to (i.e. the packet intercept is going on between
+            "ev4nk1ng" and the IRC server, while "l0g1c" could be anywhere else and his messages are only being "passively" intercepted when they
+            are forwarded from the IRC server to "ev4nk1ng") want to send some info. However, he claims he changed his "key", and then proceeds to send
+            a long hex encoded string. However, he also seems to make a mistake - saying "shit sorry, that was my priv". Seeing these long hex strings
+            and talk of "priv key" should immediately make you think of public-private-key exchanges. If we are lucky, the first string he sent by mistake is
+            his private key - meaning that we can decode any message encrypted with his public key. This is one of the most well known and widely used
+            techniques in encryption, so to understand what is going simply read the "Public Private Key Encryption" wikipedia article. He then proceeds to receive a
+            message from the server, which is probably going to be signed with his public key, and thus we can read it since he accidentally published his private key.</p>
 
 
-            <h3><b>Flag:</b> CHC{}</h3>
+            <p>We can assume RSA encryption is in use, and because these challenges aren't meant to be far too difficult a quick google search returns multiple RSA encryptors/decryptors. Of the top
+            five results, only one of them makes mention of providing input encoded in HEX as well as being able to provide the modulo by hand. </p>
+            <img src="static/img/looking_for_rsa.png">
+
+                <p>Inputting the message from l0g1c into this
+            decryptor along with ev4nk1ng's private gives no result. No worries, maybe he is as clueless as he seems - trying the second message from ev4nk1ng to l0gic gives a nice result:</p>
+
+
+            <img src="static/img/decrypted.png">
+
+            <h3><b>Flag:</b> CHCFlag{pr073c7_y0ur_k3y5_n00b}</h3>
 
             <hr>
 
