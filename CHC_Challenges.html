@@ -12,14 +12,14 @@
     <title>Cornell Hacking Club</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="static/css/modern-business.css" rel="stylesheet">
-    <link href="static/css/general.css" rel="stylesheet">
+    <link href="../static/css/modern-business.css" rel="stylesheet">
+    <link href="../static/css/general.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -664,7 +664,7 @@ print decode_flask_cookie(secret_key, cookie_str)
             packages available for most distros), and selecting File - Open your .pcap file. What we then see is something
             like below:</p>
 
-            <img src="static/img/irc_wireshark.png"  alt="First View" style="width: 100%">>
+            <img src="../static/img/irc_wireshark.png"  alt="First View" style="width: 100%">>
 
             <p>The first thing we notice (with a bit of scrolling), is that there are only two computers talking to each other.
                 We can tell because we can only see two unique IPs populating the "Source" and "Destination" columns. As a single sentence primer
@@ -677,7 +677,7 @@ print decode_flask_cookie(secret_key, cookie_str)
             that has been sent over a single connection as can be inferred from the .pcap file. normal IRC is nice in this way, because
             all chat data is simpy piped down a single TCP port as plain text. We Right Click - Follow - TCP Stream on this stream, and we see the following!</p>
 
-            <img src="static/img/follow.png"  alt="First View" style="width: 100%">>
+            <img src="../static/img/follow.png"  alt="First View" style="width: 100%">>
 
             <p>Now, we see the following (above), which is essentially all the data sent over the connection. We can quickly see the back an d
             forth between two people over the IRC - one person called "ev3nk1ng" and one called "l0gic". The easiest way to read this, and to
@@ -696,12 +696,12 @@ print decode_flask_cookie(secret_key, cookie_str)
 
             <p>We assume RSA encryption is in play (simply because it's the most well known and oldest), and because these challenges aren't meant to be far too difficult a quick google search returns multiple RSA encryptors/decryptors.
                 Of the top five results, only one of them makes mention of providing input encoded in HEX as well as being able to provide a custom modulo.</p>
-            <img src="static/img/looking_for_rsa.png"  alt="First View" style="width: 100%">
+            <img src="../static/img/looking_for_rsa.png"  alt="First View" style="width: 100%">
 
                 <p>Inputting the message from l0g1c into this
             decryptor along with ev4nk1ng's private gives no result. Strange. Did he mess up? No worries, maybe he is as clueless as he seems - trying the second message from ev4nk1ng to l0gic gives a nice result:</p>
 
-            <img src="static/img/decrypted.png"  alt="First View" style="width: 100%">
+            <img src="../static/img/decrypted.png"  alt="First View" style="width: 100%">
 
             <h3><b>Flag:</b> CHCFlag{pr073c7_y0ur_k3y5_n00b}</h3>
 
@@ -934,10 +934,10 @@ a_x_true_hero   2,4,2,4,1,5,2,2,1,2,1,1,2
 <!-- /.container -->
 
 <!-- jQuery -->
-<script src="static/js/jquery.js"></script>
+<script src="../static/js/jquery.js"></script>
 
 <!-- Bootstrap Core JavaScript -->
-<script src="static/js/bootstrap.min.js"></script>
+<script src="../static/js/bootstrap.min.js"></script>
 
 <!-- Code Snippet Prettify -->
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
