@@ -660,10 +660,10 @@ print decode_flask_cookie(secret_key, cookie_str)
             as fast to use and abuse as Wireshark is.</p>
 
             <p>Opening the file is as simple as installing wireshark (installer available for Windows, homebrew for OSX,
-            packages available for most distros), and selecting File->Open your .pcap file. What we then see is something
+            packages available for most distros), and selecting File - Open your .pcap file. What we then see is something
             like below:</p>
 
-            <img src="static/img/irc_wireshark.png">
+            <img src="static/img/irc_wireshark.png"  alt="First View" style="width: 100%">>
 
             <p>The first thing we notice (with a bit of scrolling), is that there are only two computers talking to each other.
                 We can tell because we can only see two unique IPs populating the "Source" and "Destination" columns. As a single sentence primer
@@ -674,11 +674,11 @@ print decode_flask_cookie(secret_key, cookie_str)
 
             <p>A golden feature of wireshark is the ability to "Follow" a TCP network stream - essentially this prints all the data
             that has been sent over a single connection as can be inferred from the .pcap file. normal IRC is nice in this way, because
-            all chat data is simpy piped down a single TCP port as plain text. </p>
+            all chat data is simpy piped down a single TCP port as plain text. We Right Click - Follow - TCP Stream on this stream, and we see the following!</p>
 
-            <img src="static/img/follow.png">
+            <img src="static/img/follow.png"  alt="First View" style="width: 100%">>
 
-            <p>Now, we see the following (below), which is essentially all the data sent over the connection. We can quickly see the back an d
+            <p>Now, we see the following (above), which is essentially all the data sent over the connection. We can quickly see the back an d
             forth between two people over the IRC - one person called "ev3nk1ng" and one called "l0gic". The easiest way to read this, and to
             understand what is going on is to simply read the whitepaper on IRC - also known as RFC2812 (https://tools.ietf.org/html/rfc2812). However
             this is not really necessary, as it is fairly simply to figure out what is going on (at least to the extent we are interested). </p>
@@ -687,21 +687,20 @@ print decode_flask_cookie(secret_key, cookie_str)
             "ev4nk1ng" and the IRC server, while "l0g1c" could be anywhere else and his messages are only being "passively" intercepted when they
             are forwarded from the IRC server to "ev4nk1ng") want to send some info. However, he claims he changed his "key", and then proceeds to send
             a long hex encoded string. However, he also seems to make a mistake - saying "shit sorry, that was my priv". Seeing these long hex strings
-            and talk of "priv key" should immediately make you think of public-private-key exchanges. If we are lucky, the first string he sent by mistake is
+            and talk of "priv key" should immediately make you think of <b><a href="https://en.wikipedia.org/wiki/Public-key_cryptography">public-private-key exchanges</a></b>. If we are lucky, the first string he sent by mistake is
             his private key - meaning that we can decode any message encrypted with his public key. This is one of the most well known and widely used
             techniques in encryption, so to understand what is going simply read the "Public Private Key Encryption" wikipedia article. He then proceeds to receive a
             message from the server, which is probably going to be signed with his public key, and thus we can read it since he accidentally published his private key.</p>
 
 
-            <p>We can assume RSA encryption is in use, and because these challenges aren't meant to be far too difficult a quick google search returns multiple RSA encryptors/decryptors. Of the top
-            five results, only one of them makes mention of providing input encoded in HEX as well as being able to provide the modulo by hand. </p>
-            <img src="static/img/looking_for_rsa.png">
+            <p>We assume RSA encryption is in play (simply because it's the most well known and oldest), and because these challenges aren't meant to be far too difficult a quick google search returns multiple RSA encryptors/decryptors.
+                Of the top five results, only one of them makes mention of providing input encoded in HEX as well as being able to provide a custom modulo.</p>
+            <img src="static/img/looking_for_rsa.png"  alt="First View" style="width: 100%">
 
                 <p>Inputting the message from l0g1c into this
-            decryptor along with ev4nk1ng's private gives no result. No worries, maybe he is as clueless as he seems - trying the second message from ev4nk1ng to l0gic gives a nice result:</p>
+            decryptor along with ev4nk1ng's private gives no result. Strange. Did he mess up? No worries, maybe he is as clueless as he seems - trying the second message from ev4nk1ng to l0gic gives a nice result:</p>
 
-
-            <img src="static/img/decrypted.png">
+            <img src="static/img/decrypted.png"  alt="First View" style="width: 100%">
 
             <h3><b>Flag:</b> CHCFlag{pr073c7_y0ur_k3y5_n00b}</h3>
 
