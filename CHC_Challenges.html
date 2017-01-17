@@ -320,9 +320,9 @@
 
             <p>Checking the sites cookies, we find the following:</p>
 
-<pre class="prettyprint">
+<pre><code>
 session: .eJw9zsFrgzAYBfB_ZeS8g8YNOmGHjlix8H1BSSPJpWjVxmjK6DrUlP7vkw12eJf34Me7k91YnUl8J081iUkeGNbSfKpt06EoKISbECgu4Juu8viKcjPX49pFe7qm03b3BV6-kcczOfbNv6PZOeAsCzQbPPqmR6cicEmEFiYupFNl4bhAowT24LTRpTSrM6JVlItDoMRHz9PCoZNG262HtBg4KwywjIJPFqAJ1evKxXYCdqLIkhCYNJztR21PCwr4c-xhRpG96FLN2jY92CHSJY5IccA0j7SD99_vn-3VVZf2ciPx7frdPn4AsaJa-g.C1balg.NZ3Hhz13PR-1L37NFSfeotkV0DU
-</pre>
+</code></pre>
 
             <p>As we continue to gather information, we go back to the challenge page where we see a server binary is
                 provided. Taking a look at
@@ -335,7 +335,7 @@ session: .eJw9zsFrgzAYBfB_ZeS8g8YNOmGHjlix8H1BSSPJpWjVxmjK6DrUlP7vkw12eJf34Me7k9
 
             <p>strings provides the following output:</p>
 
-<pre class="prettyprint">
+<pre><code>
 [chc@chc:~ ] $ strings login.pyc
 Flaskt
 Responset
@@ -364,7 +364,7 @@ selfR
 login.pyt
 __init__
   ...
-</pre>
+</code></pre>
 
             <p>Reading through the strings output we see something that should catch our eye. The Secret Key was
                 hardcoded in login.py and is LOLOLOL_I_Am_So_Secret! We also can see that Flask is the web framework
@@ -398,9 +398,9 @@ print decode_flask_cookie(secret_key, cookie_str)
 
             <p>The output is as follows:</p>
 
-<pre class="prettyprint">
+<pre><code>
 {u'Flag': 'CHC{d0n7_54v3_53cr37_k3y5_1n_53rv3r_f1l35}', u'_id': 'd7a24500d660fce5ccb87026b2fb63a5b497c3c64d4a26bfa29d564b1f9a6ef66d45a3146c37b2e564840e1c702b288995b7e69c2cc29484c412bb1d58874fbd', u'_permanent': True}
-</pre>
+</code></pre>
 
 
             <h3><b>Flag:</b> CHC{d0n7_54v3_53cr37_k3y5_1n_53rv3r_f1l35}</h3>
@@ -427,7 +427,8 @@ print decode_flask_cookie(secret_key, cookie_str)
             <h2 id="introduction">Introduction</h2>
             <p>(Have netcat installed)</p>
             <p>Run <code>echo &quot;test&quot; | nc chc.cs.cornell.edu 1339 | xxd</code> to get this output:</p>
-<pre><code>00000000: 4438 29c5 6703 a773 d984 bc20 5ab6 a147 D8).g..s... Z..G
+<pre><code>
+    00000000: 4438 29c5 6703 a773 d984 bc20 5ab6 a147 D8).g..s... Z..G
     00000010: 120b 0b9a 49ff b1f7 fea7 16a3 e709 cf1c ....I...........
     00000020: 76fb 8334 72ab 3708 f661 916a bc20 6d20 v..4r.7..a.j. m</code></pre>
             <p>Notice how each line is 16 bytes.</p>
@@ -689,7 +690,7 @@ print decode_flask_cookie(secret_key, cookie_str)
             a long hex encoded string. However, he also seems to make a mistake - saying "shit sorry, that was my priv". Seeing these long hex strings
             and talk of "priv key" should immediately make you think of <b><a href="https://en.wikipedia.org/wiki/Public-key_cryptography">public-private-key exchanges</a></b>. If we are lucky, the first string he sent by mistake is
             his private key - meaning that we can decode any message encrypted with his public key. This is one of the most well known and widely used
-            techniques in encryption, so to understand what is going simply read the "Public Private Key Encryption" wikipedia article. He then proceeds to receive a
+            techniques in encryption, so to understand what is going on simply read the "Public Private Key Encryption" wikipedia article. He then proceeds to receive a
             message from the server, which is probably going to be signed with his public key, and thus we can read it since he accidentally published his private key.</p>
 
 
@@ -725,7 +726,7 @@ print decode_flask_cookie(secret_key, cookie_str)
 
             <p>First I try running the executable in terminal to get familiar with the output. I'm greeted with:</p>
 
-<pre class="prettyprint">
+<pre><code>
 ~~~[* Here be dragons, you've been warned! *]~~~
 Welcome to the text adventure dragon minigame!
 You are an adventurer seeking fortune and honor by defeating the dragon plaguing the countryside
@@ -735,14 +736,14 @@ So, where do you start your adventure?
 1) The great caves of N'gorth
 2) The city center
 3) The old groves
-</pre>
+</code></pre>
 
             <p>Opening up the executable reveals a <i>TEXT</i> section and a series of functions, as usual. A brief scan
                 through the text section reveals nothing that looks like a key, so we should check out the execution
                 itself, it must somehow build a key.</p>
             <p>We can scroll down to <tt>_main</tt> to how execution starts:</p>
 
-<pre class="prettyprint">
+<pre><code>
                          _main:
 0000000100001490         push       rbp
 0000000100001491         mov        rbp, rsp
@@ -752,7 +753,7 @@ So, where do you start your adventure?
 00000001000014a6         lea        rdx, qword [ds:_REINFORCEMENTS]
 00000001000014ad         lea        r8, qword [ds:_AVOID_CAVE_TRAPS]
 ...
-</pre>
+</code></pre>
 
             <p>We can recognize some familiar text thanks to the inplace strings on the right-hand-side.
                 Looking around we can also spot a call to a function called <tt>_startGame</tt>, in which we find calls
@@ -766,7 +767,7 @@ So, where do you start your adventure?
                 example to see what this argument could be: let's jump to <tt>_cityCenter</tt></p>
 
             <p>In execution typing <tt>2</tt> brings us to the city center with the following prompt:</p>
-<pre class="prettyprint">
+<pre><code>
 Health: 100
 The city center is full of activity! There's so much to do!
 1) Talk to the madman
@@ -774,7 +775,7 @@ The city center is full of activity! There's so much to do!
 3) Leave the city for the old grove
 4) Go to the tavern
 5) Go to the caves
-</pre>
+</code></pre>
 
             <p>In the disassembler we see that <tt>_playerChoice</tt> is now presented with the arguments <tt>[ss:rbp+var_8]</tt>,
                 <tt>"f.j_r"</tt>, and <tt>5</tt>. So we again have 5 options and the parameter 5 being passed. Also we
@@ -859,13 +860,13 @@ for key,path in keygen():
 </pre>
             <p>Running this outputs 15345 lines of possible key/path combinations:</p>
 
-<pre class="prettyprint">
+<pre><code>
 arue_hero   2,5,2,2,1,2,1,1,3
 arue_hero   2,5,2,2,1,2,1,1,2
 arue_hero   2,5,2,2,1,2,1,1,1
 gue_hero    1,2,2,1,2,1,1,3
 ...
-</pre>
+</code></pre>
             <p>None of these first few allow us to <i>kill the dragon</i>, but it looks like the all end in
                 <tt>hero</tt>, and possibly <tt>_</tt> demarks spaces, let's try considering only keys which are made of
                 english words separated by underscores:</p>
@@ -890,14 +891,14 @@ for key,path in keygen():
 </code>
 </pre>
             <p>This outputs:</p>
-<pre class="prettyprint">
+<pre><code>
 a_true_hero 2,4,1,5,2,2,1,2,1,1,3
 a_true_hero 2,4,1,5,2,2,1,2,1,1,2
 a_true_hero 2,4,1,5,2,2,1,2,1,1,1
 a_x_true_hero   2,4,2,4,1,5,2,2,1,2,1,1,3
 a_x_true_hero   2,4,2,4,1,5,2,2,1,2,1,1,2
 ...
-</pre>
+</code></pre>
             <p>It looks like this may be our key, chances are that the <tt>CHC{...}</tt> are added somewhere else in the
                 executable, but by inputting the choices <tt>2,4,1,5,2,2,1,2,1,1,3</tt> we can verify that we have the
                 correct combination to defeat the dragon. If we open up the executable now in a debugger and input the
