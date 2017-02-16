@@ -865,6 +865,46 @@ if __name__ == "__main__":
 
 </div>
     <!-- End of writeup -->
+<div class="col-lg-12">
+
+    <hr>
+
+    <!-- Blog Post -->
+    <h1>OSINT200</h1>
+
+    <hr>
+
+    <!-- Date/Time -->
+    <p><i class="fa fa-clock-o"></i> Posted on February 16, 2017 at 12:10 AM</p>
+
+    <hr>
+
+    <p class="lead">IP: http://54.89.146.217/ and <a href="https://s3.amazonaws.com/hackim17/osint2/osint200.png"  rel="nofollow">osint200.png</a></p>
+
+    <hr>
+
+    <p>The IP was the same as another challenge and displayed a plaintext message unrelated to the challenge. The linked image contained the text "I have a request, but it's not for the football club" and a pattern on the side that could be read sideways as "7033." The image was referencing <a href="https://tools.ietf.org/html/rfc7033" rel="nofollow">RFC 7033, Webfinger.</a> Based on that specification, we found the next clue by navigating to this URL: </p>
+
+<pre><code>http://54.89.146.217//.well-known/webfinger?resource=</code></pre>
+
+    <p>That URL yielded the text:</p>
+
+<pre><code>ssdeep(v)
+
+flag{ssdeep}</code></pre>
+
+<p>Googling the hash yielded a single result: <a href="https://vicheck.ca/report.php
+">ViCheck.ca - Malware Hash Index - https://vicheck.ca/report.php</a> with the description "Composite Document File V2 Document, Little Endian, Os. Virus Report Embedded Executable. File: crash.txt. MD5: 523bd1e47b08cfd4d92cddcbff8e541d." No cache was available and the visiting the page did not have the relevant hash anymore. On that page, however, you could determine that the site looked up malware samples by the MD5. Example:</p>
+
+<pre><code>https://vicheck.ca/md5query.php?hash=581d9462d50657d929b656ba5f423fc2</code></pre>
+
+<p>Substituting in the Hash from the webfinger page yielded <a href="https://vicheck.ca/md5query.php?hash=581d9462d50657d929b656ba5f423fc2">this page</a> which shows the SSDEEP hash of the original sample. Placing that inside the flag{} yielded the correct answer.</p>
+
+<h3><b>Flag:</b> flag{3072:uFvAPdnvdoz91j/q2p4N1m1QmKoEe2TE4lvrNh:uFvAPdnvdoz91rq2p4rm1QdoEe2TE4l/}</h3>
+
+</div>
+</div>
+<!-- End of writeup -->
 
     </div>
     <!-- Writeup Content End-->
