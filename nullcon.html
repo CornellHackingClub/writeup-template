@@ -181,6 +181,51 @@ Decoded: 2b4b037fd1f30375e5cd871448b5b95c
 
         <!-- Start of writeup -->
         <div class="col-lg-12">
+            <hr>
+            <!-- Blog Post -->
+            <h1>Web200</h1>
+
+            <hr>
+            <!-- Date/Time -->
+            <p><i class="fa fa-clock-o"></i> Posted on February 17, 2017 at 8:00 PM</p>
+
+            <br/>
+            <p class="lead">There are two kinds of people in this world. One with all the privileges and the others. Can you get the flag by eating some British biscuit?</p>
+            <br/>
+
+            <p>The site is a login form with the option to either sign in or sign up. The form itself is not vulnerable, however, we can sign in using various default username/password combinations, such as admin:admin. Signing in with this account gives us a simple page with the message "Welcome limited user!" and a logout button. </p>
+
+            <br/>
+
+            <p>Looking at the request headers for this page, we can see that aside from PHPSESSID, two additional cookies are being used for authentication: u and r.</p>
+
+            <br/>
+<pre><code>
+u=351e76680321232f297a57a5a743894a0e4a801fc3
+r=351e766803d63c7ede8cb1e1c8db5e51c63fd47cff
+</code></pre>
+
+            <br/>
+            <p>The cookies are both 42 characters long and begin with the same 10 character long string "351e766803". The second part of each cookie appears to be an MD5 hash. Decrypting them, we get the folowing:</p>
+            <br/>
+<pre><code>
+21232f297a57a5a743894a0e4a801fc3 MD5 : admin
+d63c7ede8cb1e1c8db5e51c63fd47cff MD5 : limited
+</code></pre>
+
+            <br/>
+            <p>It is clear that the 'r' cookie controls the access level of the account. Changing the value of this cookie to "351e766803" + the MD5 hash of "admin" allows us to gain access to the administrator account, which has the flag on the home page.</p>
+
+            <br/>
+
+            <h3><b>Flag:</b> flag{bb6df1e39bd297a47ed0eeaea9cac7ee}</h3>
+
+        </div>
+        <!-- End of writeup -->
+
+
+        <!-- Start of writeup -->
+        <div class="col-lg-12">
 
             <hr>
 
