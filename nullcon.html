@@ -336,6 +336,69 @@ flag{aniceflag}
         </div>
         <!-- End of writeup -->
 
+
+
+        <!-- Start of writeup -->
+        <div class="col-lg-12">
+
+            <hr>
+
+            <!-- Blog Post -->
+            <h1>Crypto100</h1>
+
+            <hr>
+
+            <!-- Date/Time -->
+            <p><i class="fa fa-clock-o"></i> Posted on February 21, 2017 at 9:45 AM</p>
+
+            <hr>
+
+            <img class="lead" src="static/img/cryptopuzzle1.png">
+
+            <hr>
+
+            <p>The clue is a screenshot of a webpage, called Brainwallet, which contains a patially obscured passphrase <b>8ln********nl8</b> and instructions to "find the private key", as well as a QR-code and a superimposed image of scrambled eggs with the text <b>nullcon8itsgr8</b></p>
+
+            <br/>
+
+            <!-- Post Content -->
+            <p>The screenshot is immediately identifiable as a Bitcoin brainwallet generator, which takes a passphrase and generates a Bitcoin private key / address pair. The image of scrambled eggs suggests that the passphrase is a permutation of the string "nullcon8itsgr8", and the partilly unobscured passphrase indicates that the solution begins with "8ln" and ends with "nl8". This leaves us with all of the possible permutations of "ucoitsgr". The 40,320 possible passphrases should be trivial to brute force. </p>
+            <br/>
+
+	    <p>First we generate a list of all possible passphrases:</p>	<pre class="prettyprint">
+<code class="language-python">
+from itertools import permutations
+f = open("passphrases.txt","w")
+for p in permutations("ucoitsgr"):
+    f.write("8ln"+''.join(p)+"nl8\n")
+f.close()
+</code>
+</pre>
+
+            <br/>
+
+            <p>Now we need to generate Bitcoin addresses from each of the possible passphrases and see which one matches the address in the picture. We scan the QR code and find that the target address is <b>17iUnGoZbFrGS7uU9z2d2yRT9BKgVqnKnn</b>. To do the actual cracking, we use a tool called <a href="https://github.com/ryancdotorg/brainflayer">brainflayer</a>. First we convert the address from <a href="https://en.bitcoin.it/wiki/Base58Check_encoding">Base58Check</a> encoding to the raw hex using <a href="https://github.com/grondilu/bitcoin-bash-tools">Bitcoin-bash-tools</a>. Then we convert the hex address to a bloom filter and run the tool: </p>
+<pre><code>$decodeBase58 17iUnGoZbFrGS7uU9z2d2yRT9BKgVqnKnn > addr.hex
+$./hex2blf addr.hex addr.blf
+$./brainflayer -b addr.blf -i passphrases.txt
+> 49a8ffca38cdd108a25715a3b013e76ff8db39f5:u:sha256:8lnustorcginl8
+</code></pre>
+            <br/>
+	    <p>We now have the passphrase, but we need to convert it into the <a href="https://en.bitcoin.it/wiki/Wallet_import_format"> Wallet Import Format</a>, which is a checksummed, standardized, Base58Check encoded format. We sha256 the passphrase to get the raw private key, compute the checksum and then base58 encode it.</p>
+<pre><code>$ HEXKEY=$(echo -n "8lnustorcginl8" | sha256sum -b | head -c 64)
+$ CHECKSUM=$(echo -n 80$HEXKEY | xxd -r -p | sha256sum -b | head -c 64 | xxd -r -p | sha256sum -b | head -c 8)
+$ echo $(encodeBase58 80$HEXKEY$CHECKSUM)
+> 5KjzfnM4afWU8fJeUgGnxKbtG5FHtr6Suc41juGMUmQKC7WYzEG
+</code></pre>
+            <br/>
+
+            <h3><b>Flag:</b> flag{5KjzfnM4afWU8fJeUgGnxKbtG5FHtr6Suc41juGMUmQKC7WYzEG}</h3>
+
+
+        </div>
+        <!-- End of writeup -->
+
+
         <!-- Start of writeup -->
 <div class="col-lg-12">
 
