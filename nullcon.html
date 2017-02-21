@@ -1011,6 +1011,74 @@ flag{ssdeep}</code></pre>
 <h3><b>Flag:</b> flag{3072:uFvAPdnvdoz91j/q2p4N1m1QmKoEe2TE4lvrNh:uFvAPdnvdoz91rq2p4rm1QdoEe2TE4l/}</h3>
 
 </div>
+<div class="col-lg-12">
+<h1>Programming300</h1>
+<p><i class="fa fa-clock-o"></i> Posted on Tuesday, February 21, 2017 at 4:20 PM</p>
+<p class="lead">Dig deeper and try harder</p>
+<p>The challenge page links to a file named <code>26685</code>. Running <code>file</code> on the downloaded content reveals that it is an LZMA compressed data file. I used a tool called <code>dtrx</code> or "Do The Right Extraction" regularly so I tried that out and was greeted with another archive: a tarball. The following automates the process of extracting nested archives with special cases for archives not handled by <code>dtrx</code>.
+<pre class="prettyprint">
+<code class="language-bash">
+#!/bin/bash
+
+set -e
+
+case "$(file 26685)" in
+  "26685: ZPAQ stream, level 1")
+    mv 26685 26685.zpaq
+    zpaq x 26685
+    ;;
+  "26685: XZ compressed data")
+    mv 26685 26685.xz
+    unxz 26685.xz
+    ;;
+  "26685: lzip compressed data, version: 1")
+    lzip -d 26685
+    mv 26685.out 26685
+    ;;
+  "26685: ARJ archive data, v11, slash-switched, original name: , os: Unix")
+    mv 26685 26685.arj
+    arj e 26685
+    ;;
+  "26685: Zoo archive data, v2.10, modify: v2.0+, extract: v1.0+")
+    mv 26685 26685.zoo
+    ./booz.run x 26685
+    ;;
+  "26685: NuFile archive (apple ][) data")
+    nulib2 -p 26685 > 26685.nu
+    mv 26685.nu 26685
+    ;;
+  "26685: bzip2 compressed data, block size = 900k")
+    bzip2 -d -f 26685
+    mv 26685.out 26685
+    ;;
+  *)
+    dtrx -o -n 26685
+    ;;
+esac
+</code>
+</pre>
+<p>The above was invoked with:</p>
+<pre><code>while ./extracter.sh; do :; done</code></pre>
+<p>The only formats that posed immediate difficulty were the NuFile archive and the Zoo archive. The NuFile archive had me find an <a href=https://github.com/fadden/nulib2>open source implementation of the archiving library</a>. The Zoo archive lead me to the <code>booz</code> extraction program. Eventually I was able to decrypt the archive nest to a textfile containing a printout from <code>ls -la</code>.</p>
+<pre><code>total 120
+drwx------ 2 root     root     28672 Dec 23 21:01 apt-dpkg-install-kKBLWj
+-rw-r--r-- 1 root     root     71259 Dec 23 19:50 apt-fast.list
+-rw-r--r-- 1 root     root         0 Dec 23 19:50 apt-fast.lock
+-rw-r--r-- 1 root     root         0 Dec 23 21:03 secr
+drwx------ 3 root     root      4096 Dec 23 19:30 systemd-private-20af98806288452f91376e836938dc35-colord.service-hbUpEj
+drwx------ 3 root     flag      4096 Dec 23 19:30 63336C756448746861486C35634442684C565A686353467566513D3D 
+</code></pre>
+<p>Clearly we have a file name that will point us to the flag (owned by the <code>flag</code> user). The other files looked interesting but they ended up being red herrings. Eventually the string was decoded into the flag:
+<pre><code>63336C756448746861486C35634442684C565A686353467566513D3D
+==> (Hex to ASCII)
+c3ludHthaHl5cDBhLVZhcSFufQ==
+==> (Base64 to UTF-8)
+synt{ahyyp0a-Vaq!n}
+==> (Caeser Cipher ROT13 to ROT0)
+flag{nullc0n-Ind!a}
+</code></pre>
+<h3><b>Flag:</b> flag{nullc0n-Ind!a}</h3>
+</div>
 </div>
 <!-- End of writeup -->
 
