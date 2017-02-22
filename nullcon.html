@@ -106,7 +106,45 @@
 
     <!-- Content Row -->
     <div class="row">
+        <!-- Start of writeup -->
+        <div class="col-lg-12">
 
+        <hr>
+
+        <!-- Blog Post -->
+        <h1>Programming 100</h1>
+
+        <hr>
+
+        <!-- Date/Time -->
+        <p><i class="fa fa-clock-o"></i> Posted on February 21, 2017 at 6:30 AM</p>
+
+        <hr>
+
+        We unearthed this text file from one of the older servers and want to know what this is all about. Could you please analyse this and let us know your finding?
+
+        <p><a href="static/files/abc.txt">abc.txt</a></p>
+        <hr>
+
+        <p>Viewing the text file, we note that it looks like a python list consisting mostly of (255, 255, 255). If you've done any kind of image processing work, this kind of structure and values should jump out to you as a representation of an RGB image. This is mainly due to the tuples consisting mainly of "255"'s, the maximal RGB value.</p>
+        <p> I used Jupyter notebooks to display this data: </p>
+
+        <pre><code>import matplotlib.pyplot as plt
+        import numpy as np
+
+        f = open("abc.txt", 'r')
+        x = eval(f.readline())
+        matrix = np.array([[1 if i==(255,255,255) else 0 for i in x[j*929:(j+1)*929]] for j in range(500,569)], dtype=np.uint8)
+        plt.imshow(matrix, aspect="auto")</code></pre>
+
+
+        <p>Running this code, we obtain: </p>
+        <img src="static/img/nullconprogramming1.jpg"></img>
+
+        <h3><b>Flag:</b> flag{Pil_PIL_PIL}</h3>
+
+        </div>
+        <!-- End of writeup -->
         <!-- Start of writeup -->
         <div class="col-lg-12">
 
