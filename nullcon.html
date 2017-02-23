@@ -145,6 +145,74 @@ plt.imshow(matrix, aspect="auto")</code></pre>
 
         </div>
         <!-- End of writeup -->
+        <div class="col-lg-12">
+        <h1>Programming300</h1>
+        <p><i class="fa fa-clock-o"></i> Posted on Tuesday, February 21, 2017 at 4:20 PM</p>
+        <p class="lead">Dig deeper and try harder</p>
+        <p>The challenge page links to a file named <code>26685</code>. Running <code>file</code> on the downloaded content reveals that it is an LZMA compressed data file. I used a tool called <code>dtrx</code> or "Do The Right Extraction" regularly so I tried that out and was greeted with another archive: a tarball. The following automates the process of extracting nested archives with special cases for archives not handled by <code>dtrx</code>.
+        <pre class="prettyprint">
+        <code class="language-bash">
+        #!/bin/bash
+
+        set -e
+
+        case "$(file 26685)" in
+        "26685: ZPAQ stream, level 1")
+            mv 26685 26685.zpaq
+            zpaq x 26685
+            ;;
+        "26685: XZ compressed data")
+            mv 26685 26685.xz
+            unxz 26685.xz
+            ;;
+        "26685: lzip compressed data, version: 1")
+            lzip -d 26685
+            mv 26685.out 26685
+            ;;
+        "26685: ARJ archive data, v11, slash-switched, original name: , os: Unix")
+            mv 26685 26685.arj
+            arj e 26685
+            ;;
+        "26685: Zoo archive data, v2.10, modify: v2.0+, extract: v1.0+")
+            mv 26685 26685.zoo
+            ./booz.run x 26685
+            ;;
+        "26685: NuFile archive (apple ][) data")
+            nulib2 -p 26685 > 26685.nu
+            mv 26685.nu 26685
+            ;;
+        "26685: bzip2 compressed data, block size = 900k")
+            bzip2 -d -f 26685
+            mv 26685.out 26685
+            ;;
+        *)
+            dtrx -o -n 26685
+            ;;
+        esac
+        </code>
+        </pre>
+        <p>The above was invoked with:</p>
+        <pre><code>while ./extracter.sh; do :; done</code></pre>
+        <p>The only formats that posed immediate difficulty were the NuFile archive and the Zoo archive. The NuFile archive had me find an <a href=https://github.com/fadden/nulib2>open source implementation of the archiving library</a>. The Zoo archive lead me to the <code>booz</code> extraction program. Eventually I was able to decrypt the archive nest to a textfile containing a printout from <code>ls -la</code>.</p>
+        <pre><code>total 120
+drwx------ 2 root     root     28672 Dec 23 21:01 apt-dpkg-install-kKBLWj
+-rw-r--r-- 1 root     root     71259 Dec 23 19:50 apt-fast.list
+-rw-r--r-- 1 root     root         0 Dec 23 19:50 apt-fast.lock
+-rw-r--r-- 1 root     root         0 Dec 23 21:03 secr
+drwx------ 3 root     root      4096 Dec 23systemd-private-20af98806288452f91376e836938dc35-colord.service-hbUpEj
+drwx------ 3 root     flag      4096 Dec 23 19:30 63336C756448746861486C35634442684C565A686353467566513D3D </code></pre>
+        <p>Clearly we have a file name that will point us to the flag (owned by the <code>flag</code> user). The other files looked interesting but they ended up being red herrings. Eventually the string was decoded into the flag:
+        <pre><code>63336C756448746861486C35634442684C565A686353467566513D3D
+==> (Hex to ASCII)
+c3ludHthaHl5cDBhLVZhcSFufQ==
+==> (Base64 to UTF-8)
+synt{ahyyp0a-Vaq!n}
+==> (Caeser Cipher ROT13 to ROT0)
+flag{nullc0n-Ind!a}</code></pre>
+        <h3><b>Flag:</b> flag{nullc0n-Ind!a}</h3>
+        </div>
+    </div>
+    <!-- End of writeup -->
         <!-- Start of writeup -->
         <div class="col-lg-12">
 
@@ -166,8 +234,7 @@ plt.imshow(matrix, aspect="auto")</code></pre>
             <p> However, many teams got stuck here (and so did I for a bit). The key lay in paying close attention to how you died when confronting the final boss. If you confronted the final boss without spending too much time, you would attempt to fight it, only to be defeated by the gloating boss. However, if you wasted a lot of moves exploring the map, you wouldn't even attempt to fight back; you would shut down due to your low battery.</p>
             <p>So what if we tried to speed our way through the level? In the process of exploring the level, I had written several expect scripts to automate several processes, so I glued them together to speedrun the level.</p>
 
-            <pre><code>
-#!/usr/bin/env expect
+            <pre><code>#!/usr/bin/env expect
 spawn nc 52.90.9.177 9999
 expect "ib0t Hangar"
 send "4\n"
@@ -205,6 +272,73 @@ interact</code></pre>
             <h3><b>Flag:</b> flag{g@me_t!me_!$_g00d}</h3>
 
         </div>
+        <div class="col-lg-12">
+
+    <hr>
+
+    <!-- Blog Post -->
+    <h1>Misc 100</h1>
+
+    <hr>
+
+    <!-- Date/Time -->
+    <p><i class="fa fa-clock-o"></i> Posted on February 22, 2017 at 6:30 AM</p>
+
+    <hr>
+    You are given some old and new programs to try. The plain-text key is hidden inside these programs.
+    <p><a href="static/tryme.txt">tryme.txt</a></p>
+    <hr>
+    <p>Upon opening the file, we are confronted with code snippets in many different languages (many of which are esoteric). Although I didn't manage to execute every piece of code, I will explain some of them.</p>
+    <p>The first one was simple C++. It gave nothing interesting, just some meaningless numbers.</p>
+
+    <pre><code>#include <iostream>
+#include <string>
+#include <boost/lexical_cast.hpp>
+
+void Run( const std::string& v, int tgt, int start ) {
+    for( ; tgt >= 2 * start + 1; ++start )
+        Run( v + ' ' + boost::lexical_cast<std::string>( start ), tgt - start, start + 1 );
+    std::cout << v << ' ' << tgt << std::endl;
+}
+
+int main() {
+    Run( std::string(), 10, 1 );
+    getchar();
+}</code></pre>
+
+<p>The next one was Javascript (although very obfuscated). Due to javascript's weak typing and "ability" to coerce nearly every type, it's possible to make programs that look like this</p>
+<pre><code>$=~[];$={___:++$,$$$$:(![]+"")[$],__$:++$,$_$_:(![]+"")[$],_$_:++$,$_$$:({}+"")[$],$$_$:($[$]+"")[$],_$$:++$,$$$_:(!""+"")[$],$__:++$,$_$:++$,$$__:({}+"")[$],$$_:++$,$$$:++$,$___:++$,$__$:++$};$.$_=($.$_=$+"")[$.$_$]+($._$=$.$_[$.__$])+($.$$=($.$+"")[$.__$])+((!$)+"")[$._$$]+($.__=$.$_[$.$$_])+($.$=(!""+"")[$.__$])+($._=(!""+"")[$._$_])+$.$_[$.$_$]+$.__+$._$+$.$;$.$$=$.$+(!""+"")[$._$$]+$.__+$._+$.$+$.$$;$.$=($.___)[$.$_][$.$_];$.$($.$($.$$+"\""+$.$_$_+(![]+"")[$._$_]+$.$$$_+"\\"+$.__$+$.$$_+$._$_+$.__+"(\\\""+$.$$$$+(![]+"")[$._$_]+$.$_$_+"\\"+$.__$+$.$__+$.$$$+"{"+$.__+"\\"+$.__$+$.$_$+$.___+"\\"+$.__$+$.$_$+$.__$+"\\"+$.__$+$.$$_+$._$$+"_\\"+$.__$+$.$_$+$.__$+"\\"+$.__$+$.$$_+$._$$+"_\\"+$.__$+$.$_$+$.$$_+$._$+$.__+"_"+$.__+"\\"+$.__$+$.$_$+$.___+$.$$$_+"_"+$.$$$$+(![]+"")[$._$_]+$.$_$_+"\\"+$.__$+$.$__+$.$$$+"}\\\"\\"+$.$__+$.___+")"+"\"")())();</code></pre>
+<p>This simply popped up an alert saying "flag{this_is_not_the_flag}". I tried submitting it, but unluckily, they were telling the truth.</p>
+<p>Next we had some random ASCII text. I recognized it as Malbolge, due to the complete lack of structure. I ran it in <a href="https://zb3.github.io/malbolge-tools/">this interpreter.</a> As malbolge code is nearly impossible to write, this merely printed out "Hello World".</p>
+<pre><code>('&%:9]!~}|z2Vxwv-,POqponl$Hjig%eB@@>}=<M:9wv6WsU2T|nm-,jcL(I&%$#"
+`CB]V?Tx<uVtT`Rpo3NlF.Jh++FdbCBA@?]!~|4XzyTT43Qsqq(Lnmkj"Fhg${z@></code></pre>
+<p></p>
+<p>Next we had some undecipherable Unicode garbage and then some Java garbage, which I decided to skip over. I couldn't figure out what language the unicode was in, and the Java program took a lot of setup to get right.</p>
+<p>Following that, we had another code snippet that looked like our earlier obfuscated javascript code. Upon executing this, however, we ran into recursion depth limits no matter how high I set the limit.</p>
+<p>Next, we had some Bash code, which I executed in my terminal, giving us some ascii art (it had better formatting than this on the terminal) </p>
+<pre><code>              _   _      _ _                            _     _ _                                                 
+             | | | | ___| | | ___   __      _____  _ __| | __| | |                                                      
+             | |_| |/ _ \ | |/ _ \  \ \ /\ / / _ \| '__| |/ _` | |                                                    
+             |  _  |  __/ | | (_) |  \ V  V / (_) | |  | | (_| |_|                                                      
+             |_| |_|\___|_|_|\___/    \_/\_/ \___/|_|  |_|\__,_(_)                                                    
+  
+▐▌ █                    ▐▙ █             █ █                ▗▛▀▙ ▟▜▖ ▗█  ▗█▌ ▗█▖                                          
+▐▙▄█ ▀▜▖▝▙▀▙▝▙▀▙▐▌ █    ▐▛▙█▗▛▀▙▐▌▖█     ▜▄▛▗▛▀▙ ▀▜▖▝▙▛▙      ▄▛▐▌▖█  █ ▗▛▐▌ ▝█▘                                              
+▐▌ █▗▛▜▌ █▄▛ █▄▛▝▙▄█    ▐▌▝█▐▛▀▀▐▙▙█      █ ▐▛▀▀▗▛▜▌ █       ▟▘▄▝▙▗▛  █ ▝▀▜▛  ▀                       
+▝▘ ▀ ▀▘▀▗█▖ ▗█▖ ▗▄▄▛    ▝▘ ▀ ▀▀▘ ▀▝▘     ▝▀▘ ▀▀▘ ▀▘▀▝▀▘     ▝▀▀▀ ▝▀  ▀▀▀  ▀▀  ▀     
+  
+  ▟▙█▖▟▙█▖                ▜▌           █   █   ▝▘  █       ▝█         ▟▙█▖▟▙█▖                                          
+  ███▌███▌    ▟▀▟▘▟▀▜▖▟▀▜▖▐▌▟▘    ▝▀▙ ▀█▀ ▀█▀  ▜▌ ▀█▀ █ █ ▟▀█ ▟▀▜▖    ███▌███▌                                               
+  ▝█▛ ▝█▛     ▜▄█ █▀▀▘█▀▀▘▐▛▙     ▟▀█  █▗▖ █▗▖ ▐▌  █▗▖█ █ █ █ █▀▀▘    ▝█▛ ▝█▛                                                
+   ▝   ▝      ▄▄▛ ▝▀▀ ▝▀▀ ▀▘▝▘    ▝▀▝▘ ▝▀  ▝▀  ▀▀  ▝▀ ▝▀▝▘▝▀▝▘▝▀▀      ▝   ▝                                                                    
+  
+ ... And thank you for reading!!</pre></code>
+<p>Finally, we ran into this</p>
+<pre><code>ﾟωﾟﾉ= /｀ｍ´）ﾉ ~┻━┻   //*´∇｀*/ ['_']; o=(ﾟｰﾟ)  =_=3; c=(ﾟΘﾟ) =(ﾟｰﾟ)-(ﾟｰﾟ); (ﾟДﾟ) =(ﾟΘﾟ)= (o^_^o)/ (o^_^o);(ﾟДﾟ)={ﾟΘﾟ: '_' ,ﾟωﾟﾉ : ((ﾟωﾟﾉ==3) +'_') [ﾟΘﾟ] ,ﾟｰﾟﾉ :(ﾟωﾟﾉ+ '_')[o^_^o -(ﾟΘﾟ)] ,ﾟДﾟﾉ:((ﾟｰﾟ==3) +'_')[ﾟｰﾟ] }; (ﾟДﾟ) [ﾟΘﾟ] =((ﾟωﾟﾉ==3) +'_') [c^_^o];(ﾟДﾟ) ['c'] = ((ﾟДﾟ)+'_') [ (ﾟｰﾟ)+(ﾟｰﾟ)-(ﾟΘﾟ) ];(ﾟДﾟ) ['o'] = ((ﾟДﾟ)+'_') [ﾟΘﾟ];(ﾟoﾟ)=(ﾟДﾟ) ['c']+(ﾟДﾟ) ['o']+(ﾟωﾟﾉ +'_')[ﾟΘﾟ]+ ((ﾟωﾟﾉ==3) +'_') [ﾟｰﾟ] + ((ﾟДﾟ) +'_') [(ﾟｰﾟ)+(ﾟｰﾟ)]+ ((ﾟｰﾟ==3) +'_') [ﾟΘﾟ]+((ﾟｰﾟ==3) +'_') [(ﾟｰﾟ) - (ﾟΘﾟ)]+(ﾟДﾟ) ['c']+((ﾟДﾟ)+'_') [(ﾟｰﾟ)+(ﾟｰﾟ)]+ (ﾟДﾟ) ['o']+((ﾟｰﾟ==3) +'_') [ﾟΘﾟ];(ﾟДﾟ) ['_'] =(o^_^o) [ﾟoﾟ] [ﾟoﾟ];(ﾟεﾟ)=((ﾟｰﾟ==3) +'_') [ﾟΘﾟ]+ (ﾟДﾟ) .ﾟДﾟﾉ+((ﾟДﾟ)+'_') [(ﾟｰﾟ) + (ﾟｰﾟ)]+((ﾟｰﾟ==3) +'_') [o^_^o -ﾟΘﾟ]+((ﾟｰﾟ==3) +'_') [ﾟΘﾟ]+ (ﾟωﾟﾉ +'_') [ﾟΘﾟ]; (ﾟｰﾟ)+=(ﾟΘﾟ); (ﾟДﾟ)[ﾟεﾟ]='\\'; (ﾟДﾟ).ﾟΘﾟﾉ=(ﾟДﾟ+ ﾟｰﾟ)[o^_^o -(ﾟΘﾟ)];(oﾟｰﾟo)=(ﾟωﾟﾉ +'_')[c^_^o];(ﾟДﾟ) [ﾟoﾟ]='\"';(ﾟДﾟ) ['_'] ( (ﾟДﾟ) ['_'] (ﾟεﾟ+(ﾟДﾟ)[ﾟoﾟ]+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ (ﾟΘﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟｰﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((o^_^o) +(o^_^o))+ ((o^_^o) - (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((o^_^o) +(o^_^o))+ (ﾟｰﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+((ﾟｰﾟ) + (ﾟΘﾟ))+ (c^_^o)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟｰﾟ)+ ((o^_^o) - (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟΘﾟ)+ (c^_^o)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟｰﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟｰﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ ((ﾟｰﾟ) + (o^_^o))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟｰﾟ)+ (c^_^o)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ ((o^_^o) +(o^_^o))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟｰﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ (ﾟΘﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ ((ﾟｰﾟ) + (o^_^o))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (o^_^o))+ (o^_^o)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ ((o^_^o) +(o^_^o))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟｰﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ (ﾟΘﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ ((ﾟｰﾟ) + (o^_^o))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((o^_^o) +(o^_^o))+ (o^_^o)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (o^_^o)+ ((ﾟｰﾟ) + (o^_^o))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ (ﾟΘﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((o^_^o) +(o^_^o))+ ((o^_^o) - (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (o^_^o)+ ((ﾟｰﾟ) + (o^_^o))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((o^_^o) +(o^_^o))+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((o^_^o) +(o^_^o))+ (o^_^o)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟｰﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((o^_^o) +(o^_^o))+ (o^_^o)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((o^_^o) +(o^_^o))+ (o^_^o)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (o^_^o)+ ((ﾟｰﾟ) + (o^_^o))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟΘﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ ((o^_^o) +(o^_^o))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (o^_^o)+ ((ﾟｰﾟ) + (o^_^o))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((o^_^o) +(o^_^o))+ ((o^_^o) - (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ (ﾟΘﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟｰﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (o^_^o)+ ((ﾟｰﾟ) + (o^_^o))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((o^_^o) +(o^_^o))+ ((ﾟｰﾟ) + (o^_^o))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ ((ﾟｰﾟ) + (o^_^o))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((o^_^o) +(o^_^o))+ ((o^_^o) - (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟｰﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ (ﾟｰﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (o^_^o))+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟｰﾟ)+ ((o^_^o) - (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟΘﾟ)+ (ﾟДﾟ)[ﾟoﾟ]) (ﾟΘﾟ)) ('_');</code></pre>
+<p>I had no idea what this could be. I wasn't familiar with any kind of esoteric programming language that looked like this, so I eventually decided to run it in my browser console. "Javascript has surprised me before", I thought. And that's exactly what happened. Running this in the console gives us an alert with the flag: </p>
+<h3><b>Flag:</b> flag{flags_are_useless_in_real_world}</h3>
+
+</div>
         <!-- Start of writeup -->
         <div class="col-lg-12">
 
@@ -1109,76 +1243,7 @@ flag{ssdeep}</code></pre>
 <h3><b>Flag:</b> flag{3072:uFvAPdnvdoz91j/q2p4N1m1QmKoEe2TE4lvrNh:uFvAPdnvdoz91rq2p4rm1QdoEe2TE4l/}</h3>
 
 </div>
-<div class="col-lg-12">
-<h1>Programming300</h1>
-<p><i class="fa fa-clock-o"></i> Posted on Tuesday, February 21, 2017 at 4:20 PM</p>
-<p class="lead">Dig deeper and try harder</p>
-<p>The challenge page links to a file named <code>26685</code>. Running <code>file</code> on the downloaded content reveals that it is an LZMA compressed data file. I used a tool called <code>dtrx</code> or "Do The Right Extraction" regularly so I tried that out and was greeted with another archive: a tarball. The following automates the process of extracting nested archives with special cases for archives not handled by <code>dtrx</code>.
-<pre class="prettyprint">
-<code class="language-bash">
-#!/bin/bash
 
-set -e
-
-case "$(file 26685)" in
-  "26685: ZPAQ stream, level 1")
-    mv 26685 26685.zpaq
-    zpaq x 26685
-    ;;
-  "26685: XZ compressed data")
-    mv 26685 26685.xz
-    unxz 26685.xz
-    ;;
-  "26685: lzip compressed data, version: 1")
-    lzip -d 26685
-    mv 26685.out 26685
-    ;;
-  "26685: ARJ archive data, v11, slash-switched, original name: , os: Unix")
-    mv 26685 26685.arj
-    arj e 26685
-    ;;
-  "26685: Zoo archive data, v2.10, modify: v2.0+, extract: v1.0+")
-    mv 26685 26685.zoo
-    ./booz.run x 26685
-    ;;
-  "26685: NuFile archive (apple ][) data")
-    nulib2 -p 26685 > 26685.nu
-    mv 26685.nu 26685
-    ;;
-  "26685: bzip2 compressed data, block size = 900k")
-    bzip2 -d -f 26685
-    mv 26685.out 26685
-    ;;
-  *)
-    dtrx -o -n 26685
-    ;;
-esac
-</code>
-</pre>
-<p>The above was invoked with:</p>
-<pre><code>while ./extracter.sh; do :; done</code></pre>
-<p>The only formats that posed immediate difficulty were the NuFile archive and the Zoo archive. The NuFile archive had me find an <a href=https://github.com/fadden/nulib2>open source implementation of the archiving library</a>. The Zoo archive lead me to the <code>booz</code> extraction program. Eventually I was able to decrypt the archive nest to a textfile containing a printout from <code>ls -la</code>.</p>
-<pre><code>total 120
-drwx------ 2 root     root     28672 Dec 23 21:01 apt-dpkg-install-kKBLWj
--rw-r--r-- 1 root     root     71259 Dec 23 19:50 apt-fast.list
--rw-r--r-- 1 root     root         0 Dec 23 19:50 apt-fast.lock
--rw-r--r-- 1 root     root         0 Dec 23 21:03 secr
-drwx------ 3 root     root      4096 Dec 23 19:30 systemd-private-20af98806288452f91376e836938dc35-colord.service-hbUpEj
-drwx------ 3 root     flag      4096 Dec 23 19:30 63336C756448746861486C35634442684C565A686353467566513D3D 
-</code></pre>
-<p>Clearly we have a file name that will point us to the flag (owned by the <code>flag</code> user). The other files looked interesting but they ended up being red herrings. Eventually the string was decoded into the flag:
-<pre><code>63336C756448746861486C35634442684C565A686353467566513D3D
-==> (Hex to ASCII)
-c3ludHthaHl5cDBhLVZhcSFufQ==
-==> (Base64 to UTF-8)
-synt{ahyyp0a-Vaq!n}
-==> (Caeser Cipher ROT13 to ROT0)
-flag{nullc0n-Ind!a}
-</code></pre>
-<h3><b>Flag:</b> flag{nullc0n-Ind!a}</h3>
-</div>
-</div>
-<!-- End of writeup -->
 
     </div>
     <!-- Writeup Content End-->
