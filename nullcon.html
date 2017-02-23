@@ -129,13 +129,13 @@
         <p>Viewing the text file, we note that it looks like a python list consisting mostly of (255, 255, 255). If you've done any kind of image processing work, this kind of structure and values should jump out to you as a representation of an RGB image. This is mainly due to the tuples consisting mainly of "255"'s, the maximal RGB value.</p>
         <p> I used Jupyter notebooks to display this data: </p>
 
-        <pre><code>import matplotlib.pyplot as plt
-        import numpy as np
-
-        f = open("abc.txt", 'r')
-        x = eval(f.readline())
-        matrix = np.array([[1 if i==(255,255,255) else 0 for i in x[j*929:(j+1)*929]] for j in range(500,569)], dtype=np.uint8)
-        plt.imshow(matrix, aspect="auto")</code></pre>
+        <pre><code>
+import matplotlib.pyplot as plt
+import numpy as np
+f = open("abc.txt", 'r')
+x = eval(f.readline())
+matrix = np.array([[1 if i==(255,255,255) else 0 for i in x[j*929:(j+1)*929]] for j in range(500,569)],dtype=np.uint8)
+plt.imshow(matrix, aspect="auto")</code></pre>
 
 
         <p>Running this code, we obtain: </p>
@@ -145,6 +145,66 @@
 
         </div>
         <!-- End of writeup -->
+        <!-- Start of writeup -->
+        <div class="col-lg-12">
+
+            <hr>
+
+            <!-- Blog Post -->
+            <h1>Programming 400</h1>
+
+            <hr>
+
+            <!-- Date/Time -->
+            <p><i class="fa fa-clock-o"></i> Posted on February 21, 2017 at 6:30 AM</p>
+
+            <hr>
+            Destroy the enemy bot and take control of our precious next generation robo. 
+            <p>52.90.9.177:9999</p>
+            <hr>
+            <p>Upon connecting to this with netcat, we are confronted with a text based adventure. You could get through this game manually, but this game could be broadly separated into two categories. The first was obtaining all the necessary components of your robot. The tricky part was realizing that a certain code (abacus77) retrieved from one of the destroyed robots could be entered into another to receive the laser.</p>
+            <p> However, many teams got stuck here (and so did I for a bit). The key lay in paying close attention to how you died when confronting the final boss. If you confronted the final boss without spending too much time, you would attempt to fight it, only to be defeated by the gloating boss. However, if you wasted a lot of moves exploring the map, you wouldn't even attempt to fight back; you would shut down due to your low battery.</p>
+            <p>So what if we tried to speed our way through the level? In the process of exploring the level, I had written several expect scripts to automate several processes, so I glued them together to speedrun the level.</p>
+
+            <pre><code>
+#!/usr/bin/env expect
+spawn nc 52.90.9.177 9999
+expect "ib0t Hangar"
+send "4\n"
+sleep 2;
+expect "Re\-ib0t\-control\:\>"
+send "1\n"
+sleep .1;
+expect "\[KEYPAD\]>"
+send "abacus77\n"
+sleep 2;
+expect "service port"
+send "service port\n"
+sleep 2;
+expect "Observation Deck"
+send "2\n"
+sleep 2;
+expect "Main Elevator"
+send "1\n"
+expect "service port"
+send "service port\n"
+expect "Elevator"
+send "6\n"
+expect "Terminate\n"
+send "1\n"
+expect "service port"
+send "service port\n"
+expect "Observation deck"
+send "5\n"
+expect "Enemy Command ib0t"
+send "1\n"
+interact</code></pre>
+
+        <p> This beat the boss and gave you your flag.</p>
+
+            <h3><b>Flag:</b> flag{g@me_t!me_!$_g00d}</h3>
+
+        </div>
         <!-- Start of writeup -->
         <div class="col-lg-12">
 
